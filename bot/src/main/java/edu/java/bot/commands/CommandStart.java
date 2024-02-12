@@ -19,10 +19,13 @@ public class CommandStart implements Command {
     @Override
     public SendMessage handle(Update update) {
         long chatId = update.message().chat().id();
-        return new SendMessage(
-            chatId,
-            "Хей)\nТы запустил бота для отслеживания изменений на GitHub и"
-                + " StackOverflow. Для подробного описания всех комманд введи /help."
-        );
+        if (update.message().text().equals(command())) {
+            return new SendMessage(
+                chatId,
+                "Хей)\nВы запустили бота для *отслеживания изменений* на GitHub и"
+                    + " StackOverflow. Для *подробного* описания всех комманд введите /help."
+            );
+        }
+        return new SendMessage(chatId, "Для начала работы введите *только* команду /start.");
     }
 }

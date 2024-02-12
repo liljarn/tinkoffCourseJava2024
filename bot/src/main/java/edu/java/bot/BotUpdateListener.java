@@ -10,11 +10,9 @@ import edu.java.bot.processor.MessageProcessor;
 import edu.java.bot.processor.Processor;
 import edu.java.bot.sender.Sender;
 import java.util.List;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
 public class BotUpdateListener implements UpdatesListener {
     private final Processor processor;
     private final Sender messageSender;
@@ -30,8 +28,6 @@ public class BotUpdateListener implements UpdatesListener {
     @Override
     public int process(List<Update> list) {
         for (Update update : list) {
-            log.info(update.message());
-            log.info(update.callbackQuery());
             SendMessage sendMessage = processor.check(update);
             messageSender.sendMessage(sendMessage);
         }

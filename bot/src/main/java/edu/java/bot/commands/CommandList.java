@@ -30,7 +30,7 @@ public class CommandList implements Command {
         return new SendMessage(chatId, "*Вот список отслеживаемых страниц:*\n")
             .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(List.of(
                 new Link(new UUID(1, 2), GITHUB_LINK),
-                new Link(new UUID(2, 3), STACK_LINK)
+                new Link(new UUID(2, 2), STACK_LINK)
             )));
     }
 }

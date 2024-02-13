@@ -7,27 +7,28 @@ import edu.java.bot.model.Link;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
+import static edu.java.bot.utils.MessageConsts.GITHUB_LINK;
+import static edu.java.bot.utils.MessageConsts.LIST_COMMAND;
+import static edu.java.bot.utils.MessageConsts.LIST_COMMANDS_TEXT;
+import static edu.java.bot.utils.MessageConsts.LIST_DESCRIPTION;
+import static edu.java.bot.utils.MessageConsts.STACK_LINK;
 
 @Component
 public class CommandList implements Command {
-    private static final String GITHUB_LINK = "https://github.com/liljarn/tinkoffCourseJava2024";
-    private static final String STACK_LINK =
-        "https://stackoverflow.com/questions/53579112/inject-list-of-all-beans-with-a-certain-interface";
-
     @Override
     public String command() {
-        return "/list";
+        return LIST_COMMAND;
     }
 
     @Override
     public String description() {
-        return "выводит список отслеживаемых ресурсов.";
+        return LIST_DESCRIPTION;
     }
 
     @Override
     public SendMessage handle(Update update) {
         long chatId = update.message().chat().id();
-        return new SendMessage(chatId, "*Вот список отслеживаемых страниц:*\n")
+        return new SendMessage(chatId, LIST_COMMANDS_TEXT)
             .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(List.of(
                 new Link(new UUID(1, 2), GITHUB_LINK),
                 new Link(new UUID(2, 2), STACK_LINK)

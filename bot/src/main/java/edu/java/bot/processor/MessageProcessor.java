@@ -7,6 +7,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+import static edu.java.bot.utils.MessageConsts.NOT_COMMAND;
+import static edu.java.bot.utils.MessageConsts.NOT_TEXT;
 
 @Component
 @RequiredArgsConstructor
@@ -31,14 +33,8 @@ public class MessageProcessor extends AbstractProcessor {
                     return command.handle(update);
                 }
             }
-            return new SendMessage(
-                chatId,
-                "Не понимаю :(, напишите команду /help для вывода *списка* доступных команд."
-            );
+            return new SendMessage(chatId, NOT_COMMAND);
         }
-        return new SendMessage(
-            chatId,
-            "*Пожалуйста*, не отправляйте что-либо кроме текста, мне тяжело это обрабатывать :("
-        );
+        return new SendMessage(chatId, NOT_TEXT);
     }
 }

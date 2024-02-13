@@ -2,11 +2,12 @@ package edu.java.bot.processor;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import static edu.java.bot.utils.MessageConsts.SUCCESSFUL_DELETE;
 
 public class CallbackProcessor extends AbstractProcessor {
     public SendMessage process(Update update) {
         long chatId = update.callbackQuery().from().id();
-        return new SendMessage(chatId, "Ссылка успешно удалена.");
+        return new SendMessage(chatId, SUCCESSFUL_DELETE);
     }
 
     @Override

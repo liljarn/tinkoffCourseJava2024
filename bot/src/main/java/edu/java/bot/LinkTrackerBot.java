@@ -15,7 +15,7 @@ public class LinkTrackerBot {
     private final CommandMenuBuilder commandMenuBuilder;
 
     @PostConstruct
-    private void start() {
+    public void start() {
         bot.setUpdatesListener(updatesListener);
         bot.execute(commandMenuBuilder.getCommandsMenu());
     }

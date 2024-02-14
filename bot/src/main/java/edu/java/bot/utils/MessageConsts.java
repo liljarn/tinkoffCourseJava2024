@@ -35,4 +35,5 @@ public class MessageConsts {
     public static final String URL_START = "https://";
     public static final String UNTRACK_MESSAGE = "Выберите *страницу*, которую хотите перестать отслеживать.";
     public static final String UNTRACK_WRONG_TEXT = "Введите *только* команду /untrack.";
+    public static final String LIST_WRONG_TEXT = "Введите *только* команду /list.";
 }

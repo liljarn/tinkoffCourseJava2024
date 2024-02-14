@@ -15,9 +15,10 @@ public class MessageSender implements Sender {
     private final TelegramBot bot;
 
     @Override
-    public void sendMessage(SendMessage message) {
+    public SendResponse sendMessage(SendMessage message) {
         SendResponse response = bot.execute(message.parseMode(ParseMode.Markdown));
         log.info(response.isOk());
         log.info(response.description());
+        return response;
     }
 }

@@ -11,6 +11,7 @@ import static edu.java.bot.utils.MessageConsts.GITHUB_LINK;
 import static edu.java.bot.utils.MessageConsts.LIST_COMMAND;
 import static edu.java.bot.utils.MessageConsts.LIST_COMMANDS_TEXT;
 import static edu.java.bot.utils.MessageConsts.LIST_DESCRIPTION;
+import static edu.java.bot.utils.MessageConsts.LIST_WRONG_TEXT;
 import static edu.java.bot.utils.MessageConsts.STACK_LINK;
 
 @Component
@@ -28,10 +29,13 @@ public class CommandList implements Command {
     @Override
     public SendMessage handle(Update update) {
         long chatId = update.message().chat().id();
-        return new SendMessage(chatId, LIST_COMMANDS_TEXT)
-            .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(List.of(
-                new Link(new UUID(1, 2), GITHUB_LINK),
-                new Link(new UUID(2, 2), STACK_LINK)
-            )));
+        if (update.message().text().equals(command())) {
+            return new SendMessage(chatId, LIST_COMMANDS_TEXT)
+                .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(List.of(
+                    new Link(new UUID(1, 2), GITHUB_LINK),
+                    new Link(new UUID(2, 2), STACK_LINK)
+                )));
+        }
+        return new SendMessage(chatId, LIST_WRONG_TEXT);
     }
 }

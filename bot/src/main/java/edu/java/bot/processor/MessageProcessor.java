@@ -7,8 +7,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import static edu.java.bot.utils.MessageConsts.NOT_COMMAND;
-import static edu.java.bot.utils.MessageConsts.NOT_TEXT;
+import static edu.java.bot.utils.MessageConstants.NOT_COMMAND;
+import static edu.java.bot.utils.MessageConstants.NOT_TEXT;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class MessageProcessor extends AbstractProcessor {
     @Override
     public SendMessage process(Update update) {
         long chatId = update.message().chat().id();
-        if (update.message().text() != null) {
+        if (update.message().text() != null)  {
             for (Command command : commandsList) {
                 if (command.supports(update)) {
                     return command.handle(update);

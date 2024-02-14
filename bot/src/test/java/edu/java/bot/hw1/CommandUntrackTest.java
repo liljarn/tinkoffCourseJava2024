@@ -6,9 +6,9 @@ import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandUntrack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_COMMAND;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_MESSAGE;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_COMMAND;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_MESSAGE;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_WRONG_TEXT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandUntrackTest {

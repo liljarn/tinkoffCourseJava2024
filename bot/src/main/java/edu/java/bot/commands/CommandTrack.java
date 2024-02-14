@@ -3,11 +3,11 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
-import static edu.java.bot.utils.MessageConsts.TRACK_COMMAND;
-import static edu.java.bot.utils.MessageConsts.TRACK_COMMAND_ONLY;
-import static edu.java.bot.utils.MessageConsts.TRACK_DESCRIPTION;
-import static edu.java.bot.utils.MessageConsts.TRACK_WRONG_TEXT;
-import static edu.java.bot.utils.MessageConsts.URL_START;
+import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND;
+import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND_ONLY;
+import static edu.java.bot.utils.MessageConstants.TRACK_DESCRIPTION;
+import static edu.java.bot.utils.MessageConstants.TRACK_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.URL_START;
 
 @Component
 public class CommandTrack implements Command {

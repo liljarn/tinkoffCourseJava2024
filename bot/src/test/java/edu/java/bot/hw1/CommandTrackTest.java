@@ -6,10 +6,10 @@ import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandTrack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static edu.java.bot.utils.MessageConsts.GITHUB_LINK;
-import static edu.java.bot.utils.MessageConsts.TRACK_COMMAND;
-import static edu.java.bot.utils.MessageConsts.TRACK_COMMAND_ONLY;
-import static edu.java.bot.utils.MessageConsts.TRACK_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.GITHUB_LINK;
+import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND;
+import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND_ONLY;
+import static edu.java.bot.utils.MessageConstants.TRACK_WRONG_TEXT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandTrackTest {

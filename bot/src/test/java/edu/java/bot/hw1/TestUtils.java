@@ -11,6 +11,15 @@ import static org.mockito.Mockito.when;
 
 @UtilityClass
 public class TestUtils {
+    public static final String COMMANDS =
+        """
+            Список команд:
+            /start — Зарегистрировать нового пользователя.
+            /list — Вывести список отслеживаемых ресурсов.
+            /track — Добавить отслеживаемый ресурс.
+            /untrack — Удалить отслеживаемый ресурс.
+            """;
+
     public static Update createMockUpdate(String text, long chatId) {
         Update update = Mockito.mock(Update.class);
         Message message = Mockito.mock(Message.class);

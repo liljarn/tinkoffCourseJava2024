@@ -7,12 +7,12 @@ import edu.java.bot.model.Link;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
-import static edu.java.bot.utils.MessageConsts.GITHUB_LINK;
-import static edu.java.bot.utils.MessageConsts.LIST_COMMAND;
-import static edu.java.bot.utils.MessageConsts.LIST_COMMANDS_TEXT;
-import static edu.java.bot.utils.MessageConsts.LIST_DESCRIPTION;
-import static edu.java.bot.utils.MessageConsts.LIST_WRONG_TEXT;
-import static edu.java.bot.utils.MessageConsts.STACK_LINK;
+import static edu.java.bot.utils.MessageConstants.GITHUB_LINK;
+import static edu.java.bot.utils.MessageConstants.LIST_COMMAND;
+import static edu.java.bot.utils.MessageConstants.LIST_COMMANDS_TEXT;
+import static edu.java.bot.utils.MessageConstants.LIST_DESCRIPTION;
+import static edu.java.bot.utils.MessageConstants.LIST_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.STACK_LINK;
 
 @Component
 public class CommandList implements Command {

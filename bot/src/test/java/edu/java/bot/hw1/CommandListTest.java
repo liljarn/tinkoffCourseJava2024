@@ -6,9 +6,9 @@ import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandList;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static edu.java.bot.utils.MessageConsts.LIST_COMMAND;
-import static edu.java.bot.utils.MessageConsts.LIST_COMMANDS_TEXT;
-import static edu.java.bot.utils.MessageConsts.LIST_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.LIST_COMMAND;
+import static edu.java.bot.utils.MessageConstants.LIST_COMMANDS_TEXT;
+import static edu.java.bot.utils.MessageConstants.LIST_WRONG_TEXT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandListTest {

@@ -7,12 +7,12 @@ import edu.java.bot.model.Link;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
-import static edu.java.bot.utils.MessageConsts.GITHUB_LINK;
-import static edu.java.bot.utils.MessageConsts.STACK_LINK;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_COMMAND;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_DESCRIPTION;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_MESSAGE;
-import static edu.java.bot.utils.MessageConsts.UNTRACK_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.GITHUB_LINK;
+import static edu.java.bot.utils.MessageConstants.STACK_LINK;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_COMMAND;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_DESCRIPTION;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_MESSAGE;
+import static edu.java.bot.utils.MessageConstants.UNTRACK_WRONG_TEXT;
 
 @Component
 public class CommandUntrack implements Command {

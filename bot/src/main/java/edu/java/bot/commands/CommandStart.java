@@ -3,10 +3,10 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
-import static edu.java.bot.utils.MessageConsts.START_COMMAND;
-import static edu.java.bot.utils.MessageConsts.START_DESCRIPTION;
-import static edu.java.bot.utils.MessageConsts.START_MESSAGE;
-import static edu.java.bot.utils.MessageConsts.START_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.START_COMMAND;
+import static edu.java.bot.utils.MessageConstants.START_DESCRIPTION;
+import static edu.java.bot.utils.MessageConstants.START_MESSAGE;
+import static edu.java.bot.utils.MessageConstants.START_WRONG_TEXT;
 
 @Component
 public class CommandStart implements Command {

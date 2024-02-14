@@ -5,10 +5,10 @@ import com.pengrad.telegrambot.request.SendMessage;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import static edu.java.bot.utils.MessageConsts.HELP_COMMAND;
-import static edu.java.bot.utils.MessageConsts.HELP_COMMANDS_LIST;
-import static edu.java.bot.utils.MessageConsts.HELP_DESCRIPTION;
-import static edu.java.bot.utils.MessageConsts.HELP_WRONG_TEXT;
+import static edu.java.bot.utils.MessageConstants.HELP_COMMAND;
+import static edu.java.bot.utils.MessageConstants.HELP_COMMANDS_LIST;
+import static edu.java.bot.utils.MessageConstants.HELP_DESCRIPTION;
+import static edu.java.bot.utils.MessageConstants.HELP_WRONG_TEXT;
 
 @Component
 @RequiredArgsConstructor

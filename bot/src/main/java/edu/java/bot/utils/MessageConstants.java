@@ -3,7 +3,7 @@ package edu.java.bot.utils;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class MessageConsts {
+public class MessageConstants {
     public static final String START_COMMAND = "/start";
     public static final String HELP_COMMAND = "/help";
     public static final String TRACK_COMMAND = "/track";

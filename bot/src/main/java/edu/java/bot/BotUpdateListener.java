@@ -28,8 +28,10 @@ public class BotUpdateListener implements UpdatesListener {
     @Override
     public int process(List<Update> list) {
         for (Update update : list) {
-            SendMessage sendMessage = processor.check(update);
-            messageSender.sendMessage(sendMessage);
+            if (update.editedMessage() == null) {
+                SendMessage sendMessage = processor.check(update);
+                messageSender.sendMessage(sendMessage);
+            }
         }
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }

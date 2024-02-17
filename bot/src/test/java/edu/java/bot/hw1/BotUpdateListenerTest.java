@@ -13,9 +13,10 @@ import org.mockito.Mockito;
 import static edu.java.bot.utils.MessageConstants.START_COMMAND;
 
 public class BotUpdateListenerTest {
+
     @Test
-    @DisplayName("Process test")
-    public void process_shouldCallMethodSendMessage_fromSenderClass() {
+    @DisplayName("Process sent message test")
+    public void process_shouldCallMethodSendMessage_whenMessageWasSent() {
         Update mockUpdate = TestUtils.createMockUpdate(START_COMMAND, 1L);
         List<Command> commands = List.of(new CommandStart());
         List<Update> updates = List.of(mockUpdate);
@@ -23,6 +24,19 @@ public class BotUpdateListenerTest {
         BotUpdateListener listener = new BotUpdateListener(commands, sender);
         listener.process(updates);
         Mockito.verify(sender, Mockito.times(1))
+            .sendMessage(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("Process edited message test")
+    public void process_shouldNotCallMethodSendMessage_whenMessageWasEdited() {
+        Update mockUpdate = TestUtils.createMockUpdateEditedMessage(START_COMMAND, 1L);
+        List<Command> commands = List.of(new CommandStart());
+        List<Update> updates = List.of(mockUpdate);
+        Sender sender = Mockito.mock(MessageSender.class);
+        BotUpdateListener listener = new BotUpdateListener(commands, sender);
+        listener.process(updates);
+        Mockito.verify(sender, Mockito.times(0))
             .sendMessage(Mockito.any());
     }
 }

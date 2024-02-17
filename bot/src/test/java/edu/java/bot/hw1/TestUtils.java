@@ -14,6 +14,7 @@ public class TestUtils {
     public static final String COMMANDS =
         """
             Список команд:
+            /help — Вывести список команд.
             /start — Зарегистрировать нового пользователя.
             /list — Вывести список отслеживаемых ресурсов.
             /track — Добавить отслеживаемый ресурс.
@@ -28,6 +29,17 @@ public class TestUtils {
         when(message.text()).thenReturn(text);
         when(message.chat()).thenReturn(chat);
         when(update.message()).thenReturn(message);
+        return update;
+    }
+
+    public static Update createMockUpdateEditedMessage(String text, long chatId) {
+        Update update = Mockito.mock(Update.class);
+        Message message = Mockito.mock(Message.class);
+        Chat chat = Mockito.mock(Chat.class);
+        when(chat.id()).thenReturn(chatId);
+        when(message.text()).thenReturn(text);
+        when(message.chat()).thenReturn(chat);
+        when(update.editedMessage()).thenReturn(message);
         return update;
     }
 

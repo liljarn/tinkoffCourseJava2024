@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import static edu.java.bot.utils.MessageConstants.DASH;
 import static edu.java.bot.utils.MessageConstants.HELP_COMMAND;
 import static edu.java.bot.utils.MessageConstants.HELP_COMMANDS_LIST;
 import static edu.java.bot.utils.MessageConstants.HELP_DESCRIPTION;
@@ -30,8 +31,9 @@ public class CommandHelp implements Command {
         long chatId = update.message().chat().id();
         if (update.message().text().equals(command())) {
             StringBuilder stringBuilder = new StringBuilder(HELP_COMMANDS_LIST);
+            stringBuilder.append(command()).append(DASH).append(description()).append('\n');
             for (Command command : commandsList) {
-                stringBuilder.append(command.command()).append(" — ").append(command.description()).append('\n');
+                stringBuilder.append(command.command()).append(DASH).append(command.description()).append('\n');
             }
             return new SendMessage(chatId, stringBuilder.toString());
         }

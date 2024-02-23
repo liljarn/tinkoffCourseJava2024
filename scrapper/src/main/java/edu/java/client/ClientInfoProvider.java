@@ -6,5 +6,5 @@ import java.net.URL;
 public interface ClientInfoProvider {
     LinkInfo fetchData(URL url);
 
-    boolean isSupported(URL url);
+    boolean isValidated(URL url);
 }

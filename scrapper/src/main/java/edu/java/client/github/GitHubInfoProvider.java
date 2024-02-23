@@ -18,8 +18,13 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
     }
 
     @Override
+    public boolean isValidated(URL url) {
+        return GITHUB_PATTERN.matcher(url.toString()).matches();
+    }
+
+    @Override
     public LinkInfo fetchData(URL url) {
-        if (!isSupported(url)) {
+        if (!isValidated(url)) {
             return null;
         }
         GitHubInfo info = webClient
@@ -27,15 +32,11 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
             .uri(url.getPath())
             .retrieve()
             .bodyToMono(GitHubInfo.class)
+            .onErrorReturn(new GitHubInfo(null, null))
             .block();
-        if (info == null) {
+        if (info == null || info.equals(new GitHubInfo(null, null))) {
             return null;
         }
         return new LinkInfo(url, info.name(), info.update());
-    }
-
-    @Override
-    public boolean isSupported(URL url) {
-        return GITHUB_PATTERN.matcher(url.toString()).matches();
     }
 }

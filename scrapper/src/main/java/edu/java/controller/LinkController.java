@@ -4,10 +4,10 @@ import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
-import edu.java.service.LinkServiceImpl;
+import edu.java.service.LinkService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 @RequiredArgsConstructor
 public class LinkController {
-    private final LinkServiceImpl linkService;
+    private final LinkService linkService;
 
     private static final String TG_CHAT_ID = "Tg-Chat-Id";
 
@@ -32,7 +32,7 @@ public class LinkController {
     @PostMapping
     public LinkResponse addLink(
         @RequestHeader(TG_CHAT_ID) @NotNull Long chatId,
-        @RequestBody @Validated AddLinkRequest addLinkRequest
+        @RequestBody @Valid AddLinkRequest addLinkRequest
     ) {
         return linkService.addLink(chatId, addLinkRequest);
     }
@@ -40,7 +40,7 @@ public class LinkController {
     @DeleteMapping
     public LinkResponse deleteLink(
         @RequestHeader(TG_CHAT_ID) @NotNull Long chatId,
-        @RequestBody @Validated RemoveLinkRequest removeLinkRequest
+        @RequestBody @Valid RemoveLinkRequest removeLinkRequest
     ) {
         return linkService.deleteLink(chatId, removeLinkRequest);
     }

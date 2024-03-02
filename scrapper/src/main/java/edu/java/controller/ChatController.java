@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tg-chat")
+@RequestMapping("/tg-chat/{id}")
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
 
-    @PostMapping("/{id}")
+    @PostMapping
     public void registerChat(@PathVariable("id") Long chatId) {
         chatService.registerChat(chatId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public void deleteChat(@PathVariable("id") Long chatId) {
         chatService.deleteChat(chatId);
     }

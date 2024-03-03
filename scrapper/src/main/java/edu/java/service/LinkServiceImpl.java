@@ -4,6 +4,7 @@ import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
+import java.net.URI;
 import java.util.Collections;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,6 @@ public class LinkServiceImpl implements LinkService {
     @Override
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
         log.info("Link was removed successfully!");
-        return new LinkResponse(chatId, removeLinkRequest.link());
+        return new LinkResponse(chatId, URI.create("google.com"));
     }
 }

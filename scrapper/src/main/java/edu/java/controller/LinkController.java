@@ -31,7 +31,7 @@ public class LinkController {
 
     @PostMapping
     public LinkResponse addLink(
-        @RequestHeader(TG_CHAT_ID) @NotNull Long chatId,
+        @RequestHeader(TG_CHAT_ID)  @NotNull Long chatId,
         @RequestBody @Valid AddLinkRequest addLinkRequest
     ) {
         return linkService.addLink(chatId, addLinkRequest);

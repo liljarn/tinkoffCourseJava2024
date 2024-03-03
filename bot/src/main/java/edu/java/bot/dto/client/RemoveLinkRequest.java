@@ -1,4 +1,4 @@
-package edu.java.dto.request;
+package edu.java.bot.dto.client;
 
 import jakarta.validation.constraints.NotNull;
 

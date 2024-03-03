@@ -17,3 +17,11 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+client:
+  bot:
+    base-url:
+  github:
+    base-url:
+  stackoverflow:
+    base-url:

@@ -1,86 +1,77 @@
 package edu.java.exceptions;
 
 import edu.java.dto.response.ApiErrorResponse;
+import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
 @Log4j2
-public class AdviceApplicationHandler {
-    @ExceptionHandler(LinkNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrorResponse linkNotFound(ScrapperException e) {
-        return new ApiErrorResponse(
-            e.getDescription(),
-            e.getCode().toString(),
-            e.getClass().getName(),
-            e.getMessage(),
-            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList()
+public class AdviceApplicationHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(ScrapperException.class)
+    public ResponseEntity<ApiErrorResponse> handleScrapperException(ScrapperException ex) {
+        return new ResponseEntity<>(
+            new ApiErrorResponse(
+                ex.getDescription(),
+                String.valueOf(ex.getCode().value()),
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+            ),
+            ex.getCode()
         );
     }
 
-    @ExceptionHandler(LinkAlreadyTrackedException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiErrorResponse linkAlreadyTracked(ScrapperException e) {
-        return new ApiErrorResponse(
-            e.getDescription(),
-            e.getCode().toString(),
-            e.getClass().getName(),
-            e.getMessage(),
-            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList()
-        );
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(
+        @NotNull TypeMismatchException ex,
+        @NotNull HttpHeaders headers,
+        @NotNull HttpStatusCode status,
+        @NotNull WebRequest request
+    ) {
+        return incorrectRequest(ex, status);
     }
 
-    @ExceptionHandler(ChatNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrorResponse chatNotFound(ScrapperException e) {
-        return new ApiErrorResponse(
-            e.getDescription(),
-            e.getCode().toString(),
-            e.getClass().getName(),
-            e.getMessage(),
-            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList()
-        );
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+        HttpMessageNotReadableException ex,
+        HttpHeaders headers,
+        HttpStatusCode status,
+        WebRequest request
+    ) {
+        return incorrectRequest(ex, status);
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse chatBadRequest(MethodArgumentTypeMismatchException e) {
-        return new ApiErrorResponse(
-            "exception",
-            HttpStatus.BAD_REQUEST.toString(),
-            e.getClass().getName(),
-            e.getMessage(),
-            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList()
-        );
+    @Override
+    protected ResponseEntity<Object> handleHandlerMethodValidationException(
+        HandlerMethodValidationException ex,
+        HttpHeaders headers,
+        HttpStatusCode status,
+        WebRequest request
+    ) {
+        return incorrectRequest(ex, status);
     }
 
-    @ExceptionHandler(ChatAlreadyRegisteredException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiErrorResponse chatAlreadyRegistered(ScrapperException e) {
-        return new ApiErrorResponse(
-            e.getDescription(),
-            e.getCode().toString(),
-            e.getClass().getName(),
-            e.getMessage(),
-            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList()
-        );
-    }
-
-    @ExceptionHandler(ChatNotAuthorizedException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ApiErrorResponse chatNotAuthorized(ScrapperException e) {
-        return new ApiErrorResponse(
-            e.getDescription(),
-            e.getCode().toString(),
-            e.getClass().getName(),
-            e.getMessage(),
-            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toList()
+    private ResponseEntity<Object> incorrectRequest(Exception ex, HttpStatusCode status) {
+        return new ResponseEntity<>(
+            new ApiErrorResponse(
+                "Некорректные параметры запроса",
+                String.valueOf(status.value()),
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+            ),
+            status
         );
     }
 }

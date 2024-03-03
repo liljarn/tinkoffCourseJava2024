@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
@@ -39,6 +38,7 @@ public class ScrapperClientTest {
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
         scrapperClient.registerChat(1L);
         WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_LINK)));
+        server.stop();
     }
 
     @Test
@@ -53,6 +53,7 @@ public class ScrapperClientTest {
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
         scrapperClient.deleteChat(1L);
         WireMock.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_LINK)));
+        server.stop();
     }
 
     @Test
@@ -73,6 +74,7 @@ public class ScrapperClientTest {
         ListLinksResponse response = scrapperClient.getLinks(1L);
         ListLinksResponse actual = new ListLinksResponse(List.of(new LinkResponse(100L, URI.create("test.com"))), 1);
         assertThat(response).isEqualTo(actual);
+        server.stop();
     }
 
     @Test
@@ -93,6 +95,7 @@ public class ScrapperClientTest {
         LinkResponse response = scrapperClient.addLink(100L, addLinkRequest);
         LinkResponse actual = new LinkResponse(100L, URI.create("test.com"));
         assertThat(response).isEqualTo(actual);
+        server.stop();
     }
 
     @Test
@@ -113,6 +116,7 @@ public class ScrapperClientTest {
         LinkResponse response = scrapperClient.removeLink(1L, removeLinkRequest);
         LinkResponse actual = new LinkResponse(100L, URI.create("test.com"));
         assertThat(response).isEqualTo(actual);
+        server.stop();
     }
 
     private WebClient makeClient() {

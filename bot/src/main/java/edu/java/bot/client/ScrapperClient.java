@@ -5,6 +5,7 @@ import edu.java.bot.dto.client.LinkResponse;
 import edu.java.bot.dto.client.ListLinksResponse;
 import edu.java.bot.dto.client.RemoveLinkRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -40,7 +41,7 @@ public class ScrapperClient {
 
     public LinkResponse removeLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
         return webClient
-            .post()
+            .method(HttpMethod.DELETE)
             .uri(LINK_ENDPOINT)
             .header(TG_CHAT_HEADER, chatId.toString())
             .bodyValue(removeLinkRequest)

@@ -32,4 +32,25 @@ public class UpdateControllerTest {
             .content(objectMapper.writeValueAsString(linkUpdate)))
             .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("No body updateLink test")
+    @SneakyThrows
+    public void updateLink_shouldReturnBadRequest_whenNoBody() {
+        LinkUpdate linkUpdate = new LinkUpdate(3L, URI.create("google.com"), "test", List.of(1L));
+        Mockito.doNothing().when(updateService).updateLink(linkUpdate);
+        mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Wrong body updateLink test")
+    @SneakyThrows
+    public void updateLink_shouldReturnBadRequest_whenWrongBody() {
+        LinkUpdate linkUpdate = new LinkUpdate(3L, URI.create("google.com"), "test", List.of(1L));
+        Mockito.doNothing().when(updateService).updateLink(linkUpdate);
+        mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json")
+            .content("{}"))
+            .andExpect(status().isBadRequest());
+    }
 }

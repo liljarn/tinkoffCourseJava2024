@@ -6,8 +6,5 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-<!--    <changeSet  id="zalupa"  author="nvoxland">-->
-<!--        <sqlFile path="init_database.sql" relativeToChangelogFile="true"/>-->
-<!--    </changeSet>-->
     <include file="init_database.sql"/>
 </databaseChangeLog>

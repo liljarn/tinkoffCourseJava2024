@@ -1,4 +1,4 @@
-package edu.java.repository;
+package edu.java.repository.chat;
 
 import edu.java.exceptions.ChatAlreadyRegisteredException;
 import edu.java.exceptions.ChatNotFoundException;
@@ -25,11 +25,6 @@ public class JdbcChatRepository implements ChatRepository {
             throw new ChatNotFoundException(chatId);
         }
         jdbcTemplate.update("DELETE FROM chat WHERE chat_id = (?)", chatId);
-    }
-
-    @Override
-    public void findAll() {
-
     }
 
     private boolean isInTable(Long chatId) {

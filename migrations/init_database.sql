@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS chat
 (
-    chat_id BIGINT,
+    chat_id BIGINT NOT NULL,
 
     PRIMARY KEY (chat_id)
 );
@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS link
 (
     link_id             BIGINT                              GENERATED ALWAYS AS IDENTITY,
     last_update_time    TIMESTAMP WITH TIME ZONE,
-    name                varchar(100)                        NOT NULL ,
-    url                 text                                NOT NULL ,
+    name                varchar(100),
+    url                 text                                NOT NULL,
 
     PRIMARY KEY (link_id),
     UNIQUE (url)

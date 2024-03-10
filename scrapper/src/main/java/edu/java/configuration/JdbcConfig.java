@@ -10,15 +10,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class JdbcConfig {
-    private static final String USERNAME_PASSWORD = "postgres";
-
+    @SuppressWarnings("checkstyle:MultipleStringLiterals")
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl("jdbc:postgresql://localhost:5432/scrapper");
-        dataSource.setUsername(USERNAME_PASSWORD);
-        dataSource.setPassword(USERNAME_PASSWORD);
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("postgres");
         return dataSource;
     }
 

@@ -2,8 +2,8 @@ package edu.java.scrapper.repository;
 
 import edu.java.exceptions.ChatAlreadyRegisteredException;
 import edu.java.exceptions.ChatNotFoundException;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.JdbcChatRepository;
+import edu.java.repository.chat.ChatRepository;
+import edu.java.repository.chat.JdbcChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     private static JdbcTemplate jdbcTemplate;
 
+    //Arrange
     @BeforeAll
     public static void setup() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -34,10 +35,13 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     public void add_shouldCorrectlyAddIdInChatTable_whenIdIsNotInTable() {
+        //Arrange
         ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
         Long chatId = 1L;
+        //Act
         chatRepository.add(chatId);
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM chat WHERE chat_id = ?", Long.class, chatId);
+        //Assert
         assertThat(count).isEqualTo(1L);
     }
 
@@ -48,10 +52,10 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     public void add_shouldThrowChatAlreadyRegisteredException_whenIdIsAlreadyInTable() {
         ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
         Connection connection = POSTGRES.createConnection("");
-        Long chatId = 112003L;
+        long chatId = 112003L;
         PreparedStatement statement = connection.prepareStatement("INSERT INTO chat (chat_id) VALUES (?)");
         statement.setLong(1, chatId);
-        int statementResult = statement.executeUpdate();
+        statement.executeUpdate();
         assertThatThrownBy(() -> chatRepository.add(chatId)).isInstanceOf(ChatAlreadyRegisteredException.class);
     }
 
@@ -65,7 +69,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         Long chatId = 1879L;
         PreparedStatement statement = connection.prepareStatement("INSERT INTO chat (chat_id) VALUES (?)");
         statement.setLong(1, chatId);
-        int statementResult = statement.executeUpdate();
+        statement.executeUpdate();
         chatRepository.remove(chatId);
         Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM chat WHERE chat_id = ?", Long.class, chatId);
         assertThat(count).isEqualTo(0L);

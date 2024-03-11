@@ -5,6 +5,8 @@ import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.exceptions.LinkAlreadyTrackedException;
+import edu.java.repository.chat_link.ChatLinkRepository;
+import edu.java.repository.chat_link.JdbcChatLinkRepository;
 import edu.java.repository.link.JdbcLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
@@ -42,7 +44,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         dataSource.setUsername(POSTGRES.getUsername());
         dataSource.setPassword(POSTGRES.getPassword());
         jdbcTemplate = new JdbcTemplate(dataSource);
-        linkRepository = new JdbcLinkRepository(jdbcTemplate);
+        ChatLinkRepository chatLinkRepository = new JdbcChatLinkRepository(jdbcTemplate);
+        linkRepository = new JdbcLinkRepository(jdbcTemplate, chatLinkRepository);
     }
 
     @Test

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS chat
 CREATE TABLE IF NOT EXISTS link
 (
     link_id             BIGINT                              GENERATED ALWAYS AS IDENTITY,
-    last_update_time    TIMESTAMP WITH TIME ZONE,
+    last_update_time    TIMESTAMP WITH TIME ZONE            DEFAULT CURRENT_TIMESTAMP,
     name                varchar(100),
     url                 text                                NOT NULL,
 

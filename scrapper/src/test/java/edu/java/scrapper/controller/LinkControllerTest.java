@@ -8,7 +8,7 @@ import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.exceptions.LinkAlreadyTrackedException;
 import edu.java.exceptions.LinkNotSupportedException;
-import edu.java.service.LinkService;
+import edu.java.service.link.LinkService;
 import java.net.URI;
 import java.util.List;
 import lombok.SneakyThrows;

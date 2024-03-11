@@ -4,7 +4,7 @@ import edu.java.controller.ChatController;
 import edu.java.exceptions.ChatAlreadyRegisteredException;
 import edu.java.exceptions.ChatNotAuthorizedException;
 import edu.java.exceptions.ChatNotFoundException;
-import edu.java.service.ChatService;
+import edu.java.service.chat.ChatService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

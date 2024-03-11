@@ -13,8 +13,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.annotation.Rollback;
@@ -22,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     private static JdbcTemplate jdbcTemplate;
     private static LinkRepository linkRepository;
@@ -39,11 +46,15 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Order(1)
     @Transactional
     @Rollback
+    @SneakyThrows
     public void findAll_shouldReturnListLinksResponseWithEmptyList_whenChatDoesNotTrackAnyLink() {
         //Arrange
         Long chatId = 1L;
+        Connection connection = POSTGRES.createConnection("");
+        addChat(connection, chatId);
         //Act
         ListLinksResponse list = linkRepository.findAll(chatId);
         //Assert
@@ -51,12 +62,13 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Order(2)
     @Transactional
     @Rollback
     @SneakyThrows
     public void findAll_shouldReturnListLinksResponseWithLinks_whenChatTracksLinks() {
         //Arrange
-        Long chatId = 1L;
+        Long chatId = 2L;
         Long linkId = 1L;
         String url = "google.com";
         Connection connection = POSTGRES.createConnection("");
@@ -79,33 +91,37 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Order(3)
     @Transactional
     @Rollback
     @SneakyThrows
     public void add_shouldCorrectlyAddLinkInLinkTable() {
         //Arrange
-        Long chatId = 1L;
-        String url = "google.com";
+        Long chatId = 3L;
+        Long linkId = 2L;
+        String url = "gugle.com";
         Connection connection = POSTGRES.createConnection("");
         addChat(connection, chatId);
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
-        LinkResponse expectedResponse = new LinkResponse(1L, URI.create(url));
+        LinkResponse expectedResponse = new LinkResponse(linkId, URI.create(url));
         //Act
         LinkResponse response = linkRepository.add(chatId, addLinkRequest);
         //Assert
-        Long count = jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE link_id = ?", Long.class, 1L);
+        Long count =
+            jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE link_id = ?", Long.class, linkId);
         assertThat(count).isEqualTo(1);
         assertThat(response).isEqualTo(expectedResponse);
     }
 
     @Test
+    @Order(4)
     @Transactional
     @Rollback
     @SneakyThrows
     public void add_shouldThrowLinkAlreadyTrackedException_whenLinkIsAlreadyTracked() {
         //Arrange
-        Long chatId = 1L;
-        String url = "google.com";
+        Long chatId = 4L;
+        String url = "gagle.com";
         Connection connection = POSTGRES.createConnection("");
         addChat(connection, chatId);
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
@@ -119,14 +135,15 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
+    @Order(5)
     @Transactional
     @Rollback
     @SneakyThrows
     public void remove_shouldCorrectlyRemoveLinkFromLinkTable() {
         //Arrange
-        Long chatId = 1L;
-        Long linkId = 1L;
-        String url = "google.com";
+        Long chatId = 5L;
+        Long linkId = 4L;
+        String url = "gigle.com";
         Connection connection = POSTGRES.createConnection("");
         addChat(connection, chatId);
         PreparedStatement statement = connection.prepareStatement("INSERT INTO link (url) VALUES (?)");
@@ -142,7 +159,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         //Act
         LinkResponse response = linkRepository.remove(chatId, removeLinkRequest);
         //Assert
-        Long count = jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE link_id = ?", Long.class, 1L);
+        Long count =
+            jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE link_id = ?", Long.class, linkId);
         assertThat(response).isEqualTo(expectedResponse);
         assertThat(count).isEqualTo(0L);
     }
@@ -152,5 +170,10 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         PreparedStatement statement = connection.prepareStatement("INSERT INTO chat (chat_id) VALUES (?)");
         statement.setLong(1, chatId);
         statement.executeUpdate();
+    }
+
+    @AfterAll
+    public static void closeTestContainer() {
+        POSTGRES.close();
     }
 }

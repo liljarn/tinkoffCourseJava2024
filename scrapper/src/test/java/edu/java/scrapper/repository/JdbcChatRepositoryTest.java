@@ -1,7 +1,5 @@
 package edu.java.scrapper.repository;
 
-import edu.java.exceptions.ChatAlreadyRegisteredException;
-import edu.java.exceptions.ChatNotFoundException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat.JdbcChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
@@ -18,7 +16,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 public class JdbcChatRepositoryTest extends IntegrationEnvironment {
@@ -42,7 +39,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     public void add_shouldCorrectlyAddIdInChatTable_whenIdIsNotInTable() {
         //Arrange
         ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
-        Long chatId = 1L;
+        long chatId = 1L;
         Connection connection = POSTGRES.createConnection("");
         PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM chat WHERE chat_id = (?)");
         statement.setLong(1, chatId);

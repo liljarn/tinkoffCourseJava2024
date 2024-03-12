@@ -2,9 +2,9 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.dto.client.LinkResponse;
 import edu.java.bot.keyboard.InlineKeyboardBuilder;
+import edu.java.bot.service.command.CommandService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import static edu.java.bot.utils.MessageConstants.UNTRACK_WRONG_TEXT;
 @Component
 @RequiredArgsConstructor
 public class CommandUntrack implements Command {
-    private final ScrapperClient client;
+    private final CommandService service;
 
     @Override
     public String command() {

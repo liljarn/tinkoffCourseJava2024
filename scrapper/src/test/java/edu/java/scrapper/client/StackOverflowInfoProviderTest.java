@@ -5,7 +5,6 @@ import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
 import java.net.URI;
-import java.net.URL;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

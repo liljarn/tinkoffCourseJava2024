@@ -3,7 +3,6 @@ package edu.java.client.stackoverflow;
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import java.net.URI;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.extern.log4j.Log4j2;

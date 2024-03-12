@@ -25,7 +25,12 @@ public class CommandHelpTest {
         CommandService service = Mockito.mock(CommandService.class);
         Update mockUpdate = TestUtils.createMockUpdate(HELP_COMMAND, 1L);
         List<Command> commandsList =
-            List.of(new CommandStart(service), new CommandList(service), new CommandTrack(service), new CommandUntrack());
+            List.of(
+                new CommandStart(service),
+                new CommandList(service),
+                new CommandTrack(service),
+                new CommandUntrack(service)
+            );
         Command command = new CommandHelp(commandsList);
         //Act
         SendMessage message = command.handle(mockUpdate);

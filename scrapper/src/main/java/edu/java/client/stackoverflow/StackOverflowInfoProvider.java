@@ -2,6 +2,7 @@ package edu.java.client.stackoverflow;
 
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
+import java.net.URI;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,12 +23,12 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
     }
 
     @Override
-    public boolean isValidated(URL url) {
+    public boolean isValidated(URI url) {
         return STACKOVERFLOW_PATTERN.matcher(url.toString()).matches();
     }
 
     @Override
-    public LinkInfo fetchData(URL url) {
+    public LinkInfo fetchData(URI url) {
         Matcher matcher = STACKOVERFLOW_PATTERN.matcher(url.toString());
         if (!matcher.matches()) {
             return null;

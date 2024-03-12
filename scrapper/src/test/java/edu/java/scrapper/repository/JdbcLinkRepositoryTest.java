@@ -1,21 +1,28 @@
 package edu.java.scrapper.repository;
 
+import edu.java.client.dto.LinkInfo;
+import edu.java.dto.LinkData;
 import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
-import edu.java.exceptions.LinkAlreadyTrackedException;
-import edu.java.repository.chat_link.ChatLinkRepository;
-import edu.java.repository.chat_link.JdbcChatLinkRepository;
 import edu.java.repository.link.JdbcLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Properties;
 import lombok.SneakyThrows;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -27,7 +34,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -44,20 +50,16 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         dataSource.setUsername(POSTGRES.getUsername());
         dataSource.setPassword(POSTGRES.getPassword());
         jdbcTemplate = new JdbcTemplate(dataSource);
-        ChatLinkRepository chatLinkRepository = new JdbcChatLinkRepository(jdbcTemplate);
-        linkRepository = new JdbcLinkRepository(jdbcTemplate, chatLinkRepository);
+        linkRepository = new JdbcLinkRepository(jdbcTemplate);
     }
 
     @Test
-    @Order(1)
     @Transactional
     @Rollback
-    @SneakyThrows
     public void findAll_shouldReturnListLinksResponseWithEmptyList_whenChatDoesNotTrackAnyLink() {
         //Arrange
         Long chatId = 1L;
-        Connection connection = POSTGRES.createConnection("");
-        addChat(connection, chatId);
+        addChat();
         //Act
         ListLinksResponse list = linkRepository.findAll(chatId);
         //Assert
@@ -65,26 +67,16 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Order(2)
     @Transactional
     @Rollback
-    @SneakyThrows
     public void findAll_shouldReturnListLinksResponseWithLinks_whenChatTracksLinks() {
         //Arrange
-        Long chatId = 2L;
+        Long chatId = 1L;
         Long linkId = 1L;
+        addChat();
         String url = "google.com";
-        Connection connection = POSTGRES.createConnection("");
-        addChat(connection, chatId);
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO link (url) VALUES (?)");
-        statement.setString(1, url);
-        statement.executeUpdate();
-        statement = connection.prepareStatement("INSERT INTO chat_link (chat_id, link_id) VALUES (?, ?)");
-        statement.setLong(1, chatId);
-        statement.setLong(2, linkId);
-        statement.addBatch();
-        statement.executeBatch();
-
+        jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
+        jdbcTemplate.update("INSERT INTO chat_link (chat_id, link_id) VALUES (?, ?)", chatId, linkId);
         ListLinksResponse expectedList =
             new ListLinksResponse(List.of(new LinkResponse(linkId, URI.create(url))), 1);
         //Act
@@ -94,69 +86,36 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
-    @Order(3)
     @Transactional
     @Rollback
-    @SneakyThrows
     public void add_shouldCorrectlyAddLinkInLinkTable() {
         //Arrange
-        Long chatId = 3L;
-        Long linkId = 2L;
-        String url = "gugle.com";
-        Connection connection = POSTGRES.createConnection("");
-        addChat(connection, chatId);
+        Long chatId = 1L;
+        Long linkId = 1L;
+        addChat();
+        String url = "google.com";
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
         LinkResponse expectedResponse = new LinkResponse(linkId, URI.create(url));
         //Act
         LinkResponse response = linkRepository.add(chatId, addLinkRequest);
         //Assert
         Long count =
-            jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE link_id = ?", Long.class, linkId);
+            jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE url = ?", Long.class, url);
         assertThat(count).isEqualTo(1);
         assertThat(response).isEqualTo(expectedResponse);
     }
 
     @Test
-    @Order(4)
     @Transactional
     @Rollback
-    @SneakyThrows
-    public void add_shouldThrowLinkAlreadyTrackedException_whenLinkIsAlreadyTracked() {
-        //Arrange
-        Long chatId = 4L;
-        String url = "gagle.com";
-        Connection connection = POSTGRES.createConnection("");
-        addChat(connection, chatId);
-        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
-        //Act
-        LinkResponse response = linkRepository.add(chatId, addLinkRequest);
-        //Assert
-        assertThatThrownBy(() -> linkRepository.add(
-            chatId,
-            addLinkRequest
-        )).isInstanceOf(LinkAlreadyTrackedException.class);
-    }
-
-    @Test
-    @Order(5)
-    @Transactional
-    @Rollback
-    @SneakyThrows
     public void remove_shouldCorrectlyRemoveLinkFromLinkTable() {
         //Arrange
-        Long chatId = 5L;
-        Long linkId = 4L;
-        String url = "gigle.com";
-        Connection connection = POSTGRES.createConnection("");
-        addChat(connection, chatId);
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO link (url) VALUES (?)");
-        statement.setString(1, url);
-        statement.executeUpdate();
-        statement = connection.prepareStatement("INSERT INTO chat_link (chat_id, link_id) VALUES (?, ?)");
-        statement.setLong(1, chatId);
-        statement.setLong(2, linkId);
-        statement.addBatch();
-        statement.executeBatch();
+        Long chatId = 1L;
+        Long linkId = 1L;
+        addChat();
+        String url = "google.com";
+        jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
+        jdbcTemplate.update("INSERT INTO chat_link (chat_id, link_id) VALUES (?, ?)", chatId, linkId);
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         LinkResponse expectedResponse = new LinkResponse(linkId, URI.create(url));
         //Act
@@ -168,11 +127,53 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         assertThat(count).isEqualTo(0L);
     }
 
+    @Test
+    @Transactional
+    @Rollback
     @SneakyThrows
-    private void addChat(Connection connection, Long chatId) {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO chat (chat_id) VALUES (?)");
-        statement.setLong(1, chatId);
-        statement.executeUpdate();
+    public void updateLink_shouldCorrectlyUpdateDataInDb() {
+        //Arrange
+        addChat();
+        String url = "google.com";
+        String name = "title";
+        jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
+        //Act
+        linkRepository.updateLink(new LinkInfo(URI.create(url), name, OffsetDateTime.MIN));
+        //Assert
+        assertThat(jdbcTemplate.queryForObject("SELECT name FROM link WHERE url = (?)", String.class, url)).isEqualTo(
+            name);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    @SneakyThrows
+    public void getData_shouldReturnDataFromDb_whenLinkExists() {
+        //Arrange
+        Long linkId = 1L;
+        addChat();
+        String url = "google.com";
+        String name = "title";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        OffsetDateTime time = OffsetDateTime.now();
+        Thread.sleep(100);
+        String expectedTime = time.format(formatter);
+        jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
+        jdbcTemplate.update("UPDATE link SET last_update_time = (?), name = (?) WHERE url = (?)", time, name, url);
+        //Act
+        LinkData response = linkRepository.getData(linkId);
+        //Assert
+        assertThat(response).extracting(update -> update.updateTime().format(formatter)).isEqualTo(expectedTime);
+    }
+
+    @SneakyThrows
+    private static void addChat() {
+        jdbcTemplate.update("INSERT INTO chat (chat_id) VALUES (1)");
+    }
+
+    @AfterEach
+    void cleanUp() {
+        jdbcTemplate.update("TRUNCATE TABLE chat_link, link, chat RESTART IDENTITY CASCADE");
     }
 
     @AfterAll

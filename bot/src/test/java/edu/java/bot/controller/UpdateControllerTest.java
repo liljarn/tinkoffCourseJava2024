@@ -2,7 +2,7 @@ package edu.java.bot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.bot.dto.request.LinkUpdate;
-import edu.java.bot.service.UpdateService;
+import edu.java.bot.service.update.UpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

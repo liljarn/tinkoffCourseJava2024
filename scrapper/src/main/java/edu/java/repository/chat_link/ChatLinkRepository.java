@@ -1,6 +1,7 @@
 package edu.java.repository.chat_link;
 
 import edu.java.dto.ChatLinkResponse;
+import edu.java.dto.response.LinkResponse;
 import java.util.List;
 
 public interface ChatLinkRepository {
@@ -8,5 +9,9 @@ public interface ChatLinkRepository {
 
     void add(Long chatId, Long linkId);
 
-    boolean delete(Long chatId, Long linkId);
+    LinkResponse remove(Long chatId, Long linkId);
+
+    boolean isTracked(Long chatId, Long linkId);
+
+    boolean hasChats(Long linkId);
 }

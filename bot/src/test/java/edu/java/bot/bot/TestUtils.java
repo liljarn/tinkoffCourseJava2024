@@ -1,4 +1,4 @@
-package edu.java.bot.hw1;
+package edu.java.bot.bot;
 
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Chat;

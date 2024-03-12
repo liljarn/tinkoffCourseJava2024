@@ -1,10 +1,10 @@
 package edu.java.client;
 
 import edu.java.client.dto.LinkInfo;
-import java.net.URL;
+import java.net.URI;
 
 public interface ClientInfoProvider {
-    LinkInfo fetchData(URL url);
+    LinkInfo fetchData(URI url);
 
-    boolean isValidated(URL url);
+    boolean isValidated(URI url);
 }

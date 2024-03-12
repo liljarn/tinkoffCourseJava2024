@@ -53,7 +53,7 @@ public class ScrapperClient {
     public void registerChat(Long chatId) {
         webClient
             .post()
-            .uri(CHAT_ENDPOINT, chatId)
+            .uri(CHAT_ENDPOINT + "/" + chatId.toString())
             .retrieve()
             .bodyToMono(Void.class)
             .block();
@@ -62,7 +62,7 @@ public class ScrapperClient {
     public void deleteChat(Long chatId) {
         webClient
             .delete()
-            .uri(CHAT_ENDPOINT, chatId)
+            .uri(CHAT_ENDPOINT + "/" + chatId)
             .retrieve()
             .bodyToMono(Void.class)
             .block();

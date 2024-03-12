@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
+import java.net.URI;
 import java.net.URL;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -44,9 +45,9 @@ public class StackOverflowInfoProviderTest {
     @SneakyThrows
     public void fetchData_shouldReturnCorrectData_whenQuestionExists() {
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        LinkInfo info = client.fetchData(new URL(LINK));
+        LinkInfo info = client.fetchData(URI.create(LINK));
         assertThat(info).extracting(LinkInfo::url, LinkInfo::title)
-            .contains(new URL(LINK), "Inject list of all beans with a certain interface");
+            .contains(URI.create(LINK), "Inject list of all beans with a certain interface");
     }
 
     @Test
@@ -54,7 +55,7 @@ public class StackOverflowInfoProviderTest {
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenQuestionDoesNotExist() {
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        LinkInfo info = client.fetchData(new URL("https://stackoverflow.com/questions/10000000000000000/aboba"));
+        LinkInfo info = client.fetchData(URI.create("https://stackoverflow.com/questions/10000000000000000/aboba"));
         assertThat(info).isNull();
     }
 
@@ -63,7 +64,7 @@ public class StackOverflowInfoProviderTest {
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        LinkInfo info = client.fetchData(new URL(NOT_STACKOVERFLOW_LINK));
+        LinkInfo info = client.fetchData(URI.create(NOT_STACKOVERFLOW_LINK));
         assertThat(info).isNull();
     }
 
@@ -72,7 +73,7 @@ public class StackOverflowInfoProviderTest {
     @SneakyThrows
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(LINK))).isTrue();
+        assertThat(client.isValidated(URI.create(LINK))).isTrue();
     }
 
     @Test
@@ -80,7 +81,7 @@ public class StackOverflowInfoProviderTest {
     @SneakyThrows
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(NOT_STACKOVERFLOW_LINK))).isFalse();
+        assertThat(client.isValidated(URI.create(NOT_STACKOVERFLOW_LINK))).isFalse();
     }
 
     @AfterEach

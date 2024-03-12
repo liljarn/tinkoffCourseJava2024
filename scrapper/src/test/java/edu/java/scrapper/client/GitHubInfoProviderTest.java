@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.github.GitHubInfoProvider;
+import java.net.URI;
 import java.net.URL;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -52,8 +53,8 @@ public class GitHubInfoProviderTest {
     @SneakyThrows
     public void fetchData_shouldReturnCorrectData_whenRepositoryExists() {
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        LinkInfo info = client.fetchData(new URL(LINK));
-        assertThat(info).extracting(LinkInfo::url, LinkInfo::title).contains(new URL(LINK), "tinkoffCourseJava2023");
+        LinkInfo info = client.fetchData(URI.create(LINK));
+        assertThat(info).extracting(LinkInfo::url, LinkInfo::title).contains(URI.create(LINK), "tinkoffCourseJava2023");
     }
 
     @Test
@@ -61,7 +62,7 @@ public class GitHubInfoProviderTest {
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenRepositoryDoesNotExist() {
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        LinkInfo info = client.fetchData(new URL("https://github.com/repos/aboba/abobus"));
+        LinkInfo info = client.fetchData(URI.create("https://github.com/repos/aboba/abobus"));
         assertThat(info).isNull();
     }
 
@@ -70,7 +71,7 @@ public class GitHubInfoProviderTest {
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        LinkInfo info = client.fetchData(new URL(NOT_GITHUB_LINK));
+        LinkInfo info = client.fetchData(URI.create(NOT_GITHUB_LINK));
         assertThat(info).isNull();
     }
 
@@ -79,7 +80,7 @@ public class GitHubInfoProviderTest {
     @SneakyThrows
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(LINK))).isTrue();
+        assertThat(client.isValidated(URI.create(LINK))).isTrue();
     }
 
     @Test
@@ -87,7 +88,7 @@ public class GitHubInfoProviderTest {
     @SneakyThrows
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(NOT_GITHUB_LINK))).isFalse();
+        assertThat(client.isValidated(URI.create(NOT_GITHUB_LINK))).isFalse();
     }
 
     @AfterEach

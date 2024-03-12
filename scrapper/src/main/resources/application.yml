@@ -25,5 +25,6 @@ client:
     base-url: http://localhost:8090
   github:
     base-url:
+    token: ${TOKEN:}
   stackoverflow:
     base-url:

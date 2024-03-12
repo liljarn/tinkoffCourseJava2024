@@ -1,4 +1,4 @@
-package edu.java.bot.hw1;
+package edu.java.bot.bot;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -15,18 +15,24 @@ public class CommandUntrackTest {
     @Test
     @DisplayName("Command /untrack test")
     public void handle_returnsMessage_whenOnlyCommandWasSent() {
+        //Arrange
         Update mockUpdate = TestUtils.createMockUpdate(UNTRACK_COMMAND, 1L);
         Command command = new CommandUntrack();
+        //Act
         SendMessage message = command.handle(mockUpdate);
+        //Assert
         assertThat(message.getParameters().get("text")).isEqualTo(UNTRACK_MESSAGE);
     }
 
     @Test
     @DisplayName("Wrong command /untrack test")
     public void handle_returnsWrongMessage_whenWrongCommandWasSent() {
+        //Arrange
         Update mockUpdate = TestUtils.createMockUpdate(UNTRACK_COMMAND + "smth", 1L);
         Command command = new CommandUntrack();
+        //Act
         SendMessage message = command.handle(mockUpdate);
+        //Assert
         assertThat(message.getParameters().get("text")).isEqualTo(UNTRACK_WRONG_TEXT);
     }
 }

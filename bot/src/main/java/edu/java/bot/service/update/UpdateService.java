@@ -1,4 +1,4 @@
-package edu.java.bot.service;
+package edu.java.bot.service.update;
 
 import edu.java.bot.dto.request.LinkUpdate;
 

@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ChatController.class)
 public class ChatControllerTest {
+    //Given
     @MockBean
     private ChatService chatService;
     @Autowired
@@ -29,53 +30,83 @@ public class ChatControllerTest {
     @DisplayName("Correct request registerChat test")
     @SneakyThrows
     public void registerChat_shouldReturnOk_whenRequestIsCorrect() {
+        //Arrange
         Mockito.doNothing().when(chatService).registerChat(1L);
-        mvc.perform(post("/tg-chat/1")).andExpect(status().isOk());
+        //Act
+        var act = mvc.perform(post("/tg-chat/1"));
+        //Assert
+        act.andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Correct request deleteChat test")
     @SneakyThrows
     public void deleteChat_shouldReturnOk_whenRequestIsCorrect() {
+        //Arrange
         Mockito.doNothing().when(chatService).deleteChat(1L);
-        mvc.perform(delete("/tg-chat/1")).andExpect(status().isOk());
+        //Act
+        var act = mvc.perform(delete("/tg-chat/1"));
+        //Assert
+        act.andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Non existing chat id deleteChat test")
     @SneakyThrows
     public void deleteChat_shouldReturnNotFound_whenChatIdDoesNotExist() {
+        //Arrange
         doThrow(new ChatNotFoundException(1000000L)).when(chatService).deleteChat(1000000L);
-        mvc.perform(delete("/tg-chat/1000000")).andExpect(status().isNotFound());
+        //Act
+        var act = mvc.perform(delete("/tg-chat/1000000"));
+        //Assert
+        act.andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Existing id register chat test")
     @SneakyThrows
     public void registerChat_shouldReturnConflict_whenChatExists() {
+        //Arrange
         doThrow(new ChatAlreadyRegisteredException()).when(chatService).registerChat(2L);
-        mvc.perform(post("/tg-chat/2")).andExpect(status().isConflict());
+        //Act
+        var act = mvc.perform(post("/tg-chat/2"));
+        //Assert
+        act.andExpect(status().isConflict());
     }
 
     @Test
     @DisplayName("Unauthorized user delete chat test")
     @SneakyThrows
     public void deleteChat_shouldReturnUnauthorized_whenUserIsNotRegistered() {
+        //Arrange
         doThrow(new ChatNotAuthorizedException()).when(chatService).deleteChat(3L);
-        mvc.perform(delete("/tg-chat/3")).andExpect(status().isUnauthorized());
+        //Act
+        var act = mvc.perform(delete("/tg-chat/3"));
+        //Assert
+        act.andExpect(status().isUnauthorized());
     }
 
     @Test
     @DisplayName("Bad endpoint delete chat test")
     @SneakyThrows
     public void deleteChat_shouldReturnBadRequest_whenEndPointIsNotCorrect() {
-        mvc.perform(delete("/tg-chat/aaa")).andExpect(status().isBadRequest());
+        //Arrange
+        Mockito.doNothing().when(chatService).deleteChat(1L);
+        //Act
+        var act = mvc.perform(delete("/tg-chat/aaa"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("Bad endpoint register chat test")
     @SneakyThrows
     public void registerChat_shouldReturnBadRequest_whenEndPointIsNotCorrect() {
-        mvc.perform(post("/tg-chat/aaa")).andExpect(status().isBadRequest());
+        //Arrange
+        Mockito.doNothing().when(chatService).registerChat(1L);
+        //Act
+        var act = mvc.perform(post("/tg-chat/aaa"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 }

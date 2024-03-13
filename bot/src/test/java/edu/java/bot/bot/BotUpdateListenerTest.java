@@ -24,7 +24,7 @@ public class BotUpdateListenerTest {
         List<Command> commands = List.of(new CommandStart(service));
         List<Update> updates = List.of(mockUpdate);
         Sender sender = Mockito.mock(MessageSender.class);
-        BotUpdateListener listener = new BotUpdateListener(commands, sender);
+        BotUpdateListener listener = new BotUpdateListener(commands, sender, service);
         //Act
         listener.process(updates);
         //Assert
@@ -42,7 +42,7 @@ public class BotUpdateListenerTest {
         List<Command> commands = List.of(new CommandStart(service));
         List<Update> updates = List.of(mockUpdate);
         Sender sender = Mockito.mock(MessageSender.class);
-        BotUpdateListener listener = new BotUpdateListener(commands, sender);
+        BotUpdateListener listener = new BotUpdateListener(commands, sender, service);
         //Act
         listener.process(updates);
         //Assert

@@ -7,6 +7,7 @@ import edu.java.bot.keyboard.InlineKeyboardBuilder;
 import edu.java.bot.service.command.CommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import static edu.java.bot.utils.MessageConstants.EMPTY_TRACK_LIST;
 import static edu.java.bot.utils.MessageConstants.LIST_COMMAND;
 import static edu.java.bot.utils.MessageConstants.LIST_COMMANDS_TEXT;
 import static edu.java.bot.utils.MessageConstants.LIST_DESCRIPTION;
@@ -32,6 +33,9 @@ public class CommandList implements Command {
         long chatId = update.message().chat().id();
         if (update.message().text().equals(command())) {
             ListLinksResponse links = commandService.getLinks(chatId);
+            if (links.size() == 0) {
+                return new SendMessage(chatId, EMPTY_TRACK_LIST);
+            }
             return new SendMessage(chatId, LIST_COMMANDS_TEXT)
                 .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(links.links()));
         }

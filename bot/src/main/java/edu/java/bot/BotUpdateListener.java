@@ -9,6 +9,7 @@ import edu.java.bot.processor.CallbackProcessor;
 import edu.java.bot.processor.MessageProcessor;
 import edu.java.bot.processor.Processor;
 import edu.java.bot.sender.Sender;
+import edu.java.bot.service.command.CommandService;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +18,11 @@ public class BotUpdateListener implements UpdatesListener {
     private final Processor processor;
     private final Sender messageSender;
 
-    public BotUpdateListener(List<Command> commandsList, Sender messageSender) {
+    public BotUpdateListener(List<Command> commandsList, Sender messageSender, CommandService service) {
         this.messageSender = messageSender;
         this.processor = AbstractProcessor.link(
             new MessageProcessor(commandsList),
-            new CallbackProcessor()
+            new CallbackProcessor(service)
         );
     }
 

@@ -11,7 +11,8 @@ import org.springframework.jdbc.core.RowMapper;
 public class LinkDataMapper implements RowMapper<LinkData> {
     @Override
     public LinkData mapRow(ResultSet rs, int rowNum) throws SQLException {
-        OffsetDateTime updateTime = rs.getTimestamp("last_update_time").toLocalDateTime().atOffset(ZoneOffset.UTC);
+        ZoneOffset zone = OffsetDateTime.now().getOffset();
+        OffsetDateTime updateTime = rs.getTimestamp("last_update_time").toLocalDateTime().atOffset(zone);
         URI url = URI.create(rs.getString("url"));
         return new LinkData(updateTime, url);
     }

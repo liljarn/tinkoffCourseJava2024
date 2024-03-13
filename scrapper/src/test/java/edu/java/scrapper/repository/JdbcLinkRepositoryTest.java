@@ -139,7 +139,6 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    @SneakyThrows
     public void getData_shouldReturnDataFromDb_whenLinkExists() {
         //Arrange
         Long linkId = 1L;
@@ -148,7 +147,6 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         String name = "title";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         OffsetDateTime time = OffsetDateTime.now();
-        Thread.sleep(100);
         String expectedTime = time.format(formatter);
         jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
         jdbcTemplate.update("UPDATE link SET last_update_time = (?), name = (?) WHERE url = (?)", time, name, url);

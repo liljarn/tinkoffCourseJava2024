@@ -37,4 +37,5 @@ public class MessageConstants {
     public static final String UNTRACK_WRONG_TEXT = "Введите *только* команду /untrack.";
     public static final String LIST_WRONG_TEXT = "Введите *только* команду /list.";
     public static final String DASH = " — ";
+    public static final String EMPTY_TRACK_LIST = "Вы не отслеживаете *ни одной* ссылки";
 }

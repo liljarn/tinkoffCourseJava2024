@@ -8,6 +8,7 @@ import edu.java.bot.service.command.CommandService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import static edu.java.bot.utils.MessageConstants.EMPTY_TRACK_LIST;
 import static edu.java.bot.utils.MessageConstants.UNTRACK_COMMAND;
 import static edu.java.bot.utils.MessageConstants.UNTRACK_DESCRIPTION;
 import static edu.java.bot.utils.MessageConstants.UNTRACK_MESSAGE;
@@ -32,7 +33,10 @@ public class CommandUntrack implements Command {
     public SendMessage handle(Update update) {
         long chatId = update.message().chat().id();
         if (update.message().text().equals(command())) {
-            List<LinkResponse> links = client.getLinks(chatId).links();
+            List<LinkResponse> links = service.getLinks(chatId).links();
+            if (links.isEmpty()) {
+                return new SendMessage(chatId, EMPTY_TRACK_LIST);
+            }
             return new SendMessage(chatId, UNTRACK_MESSAGE)
                 .replyMarkup(InlineKeyboardBuilder.createCallbackKeyboard(links));
         }

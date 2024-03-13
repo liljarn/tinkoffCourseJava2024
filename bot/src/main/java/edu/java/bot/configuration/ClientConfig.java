@@ -12,7 +12,8 @@ public class ClientConfig {
 
     @Bean
     public WebClient webClient() {
-        return (botUrl == null || botUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8080").build()
+        return (botUrl == null || botUrl.isEmpty())
+            ? WebClient.builder().baseUrl("http://localhost:8080").build()
             : WebClient.builder().baseUrl(botUrl).build();
     }
 }

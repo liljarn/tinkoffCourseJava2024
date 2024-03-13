@@ -21,6 +21,7 @@ public class BotClientTest {
     @DisplayName("Bot client request test")
     @SneakyThrows
     public void sendUpdate_shouldSendRequestToClientServer() {
+        //Arrange
         WireMockServer server = new WireMockServer(8080);
         server.stubFor(post(urlPathMatching(API_LINK))
             .willReturn(aResponse()
@@ -33,7 +34,9 @@ public class BotClientTest {
             Collections.emptyList()
         );
         BotClient botClient = new BotClient(makeClient());
+        //Act
         botClient.sendUpdate(linkUpdate);
+        //Assert
         WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(API_LINK)));
     }
 

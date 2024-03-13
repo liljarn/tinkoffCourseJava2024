@@ -10,6 +10,7 @@ import edu.java.bot.dto.client.RemoveLinkRequest;
 import java.net.URI;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -26,41 +27,48 @@ public class ScrapperClientTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private WireMockServer server;
+
     @Test
     @DisplayName("Scrapper client request to ChatController registerChat test")
     @SneakyThrows
     public void registerChat_shouldSendRequestToChatController() {
-        WireMockServer server = new WireMockServer(8080);
+        //Arrange
+        server = new WireMockServer(8080);
         server.stubFor(post(urlPathMatching(CHAT_LINK))
             .willReturn(aResponse()
                 .withStatus(200)));
         server.start();
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
+        //Act
         scrapperClient.registerChat(1L);
+        //Assert
         WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_LINK)));
-        server.stop();
     }
 
     @Test
     @DisplayName("Scrapper client request to ChatController deleteChat test")
     @SneakyThrows
     public void delete_chat_shouldSendRequestToChatController() {
-        WireMockServer server = new WireMockServer(8080);
+        //Arrange
+        server = new WireMockServer(8080);
         server.stubFor(delete(urlPathMatching(CHAT_LINK))
             .willReturn(aResponse()
                 .withStatus(200)));
         server.start();
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
+        //Act
         scrapperClient.deleteChat(1L);
+        //Assert
         WireMock.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_LINK)));
-        server.stop();
     }
 
     @Test
     @DisplayName("Scrapper client request to LinkController getLinks test")
     @SneakyThrows
     public void getLinks_shouldSendRequestToLinkController() {
-        WireMockServer server = new WireMockServer(8080);
+        //Arrange
+        server = new WireMockServer(8080);
         server.stubFor(get(urlPathMatching(LINK))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -71,17 +79,19 @@ public class ScrapperClientTest {
                 )))));
         server.start();
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
-        ListLinksResponse response = scrapperClient.getLinks(1L);
         ListLinksResponse actual = new ListLinksResponse(List.of(new LinkResponse(100L, URI.create("test.com"))), 1);
+        //Act
+        ListLinksResponse response = scrapperClient.getLinks(1L);
+        //Assert
         assertThat(response).isEqualTo(actual);
-        server.stop();
     }
 
     @Test
     @DisplayName("Scrapper client request to LinkController addLink test")
     @SneakyThrows
     public void addLink_shouldSendRequestToLinkController() {
-        WireMockServer server = new WireMockServer(8080);
+        //Arrange
+        server = new WireMockServer(8080);
         server.stubFor(post(urlPathMatching(LINK))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -92,17 +102,19 @@ public class ScrapperClientTest {
         server.start();
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create("test.com"));
-        LinkResponse response = scrapperClient.addLink(100L, addLinkRequest);
         LinkResponse actual = new LinkResponse(100L, URI.create("test.com"));
+        //Act
+        LinkResponse response = scrapperClient.addLink(100L, addLinkRequest);
+        //Assert
         assertThat(response).isEqualTo(actual);
-        server.stop();
     }
 
     @Test
     @DisplayName("Scrapper client request to LinkController removeLink test")
     @SneakyThrows
     public void removeLink_shouldSendRequestToLinkController() {
-        WireMockServer server = new WireMockServer(8080);
+        //Arrange
+        server = new WireMockServer(8080);
         server.stubFor(delete(urlPathMatching(LINK))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -113,16 +125,23 @@ public class ScrapperClientTest {
         server.start();
         ScrapperClient scrapperClient = new ScrapperClient(makeClient());
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(1L);
-        LinkResponse response = scrapperClient.removeLink(1L, removeLinkRequest);
         LinkResponse actual = new LinkResponse(100L, URI.create("test.com"));
+        //Act
+        LinkResponse response = scrapperClient.removeLink(1L, removeLinkRequest);
+        //Assert
         assertThat(response).isEqualTo(actual);
-        server.stop();
     }
 
+    //Arrange
     private WebClient makeClient() {
         return WebClient
             .builder()
             .baseUrl("http://localhost:8080")
             .build();
+    }
+
+    @AfterEach
+    public void teardown() {
+        server.stop();
     }
 }

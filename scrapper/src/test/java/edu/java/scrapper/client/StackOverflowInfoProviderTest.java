@@ -24,6 +24,7 @@ public class StackOverflowInfoProviderTest {
 
     private WireMockServer server;
 
+    //Arrange
     @BeforeEach
     public void setUp() {
         server = new WireMockServer(wireMockConfig().dynamicPort());
@@ -43,8 +44,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Existing StackOverflow question link test")
     @SneakyThrows
     public void fetchData_shouldReturnCorrectData_whenQuestionExists() {
+        //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        //Act
         LinkInfo info = client.fetchData(new URL(LINK));
+        //Assert
         assertThat(info).extracting(LinkInfo::url, LinkInfo::title)
             .contains(new URL(LINK), "Inject list of all beans with a certain interface");
     }
@@ -53,8 +57,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Nonexistent StackOverflow question link test")
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenQuestionDoesNotExist() {
+        //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        //Act
         LinkInfo info = client.fetchData(new URL("https://stackoverflow.com/questions/10000000000000000/aboba"));
+        //Assert
         assertThat(info).isNull();
     }
 
@@ -62,8 +69,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Not StackOverflow link test")
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
+        //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        //Act
         LinkInfo info = client.fetchData(new URL(NOT_STACKOVERFLOW_LINK));
+        //Assert
         assertThat(info).isNull();
     }
 
@@ -71,16 +81,24 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("StackOverflow question link test")
     @SneakyThrows
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
+        //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(LINK))).isTrue();
+        //Act
+        boolean response = client.isValidated(new URL(LINK));
+        //Assert
+        assertThat(response).isTrue();
     }
 
     @Test
     @DisplayName("Not StackOverflow question link test")
     @SneakyThrows
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
+        //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(NOT_STACKOVERFLOW_LINK))).isFalse();
+        //Act
+        boolean response = client.isValidated(new URL(NOT_STACKOVERFLOW_LINK));
+        //Assert
+        assertThat(response).isFalse();
     }
 
     @AfterEach

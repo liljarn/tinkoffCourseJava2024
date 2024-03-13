@@ -23,6 +23,7 @@ public class GitHubInfoProviderTest {
 
     private WireMockServer server;
 
+    //Arrange
     @BeforeEach
     public void setUp() {
         server = new WireMockServer(wireMockConfig().dynamicPort());
@@ -51,8 +52,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Existing GitHub repository link test")
     @SneakyThrows
     public void fetchData_shouldReturnCorrectData_whenRepositoryExists() {
+        //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        //Act
         LinkInfo info = client.fetchData(new URL(LINK));
+        //Assert
         assertThat(info).extracting(LinkInfo::url, LinkInfo::title).contains(new URL(LINK), "tinkoffCourseJava2023");
     }
 
@@ -60,8 +64,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Nonexistent GitHub repository link test")
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenRepositoryDoesNotExist() {
+        //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        //Act
         LinkInfo info = client.fetchData(new URL("https://github.com/repos/aboba/abobus"));
+        //Assert
         assertThat(info).isNull();
     }
 
@@ -69,8 +76,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Not GitHub link test")
     @SneakyThrows
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
+        //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        //Act
         LinkInfo info = client.fetchData(new URL(NOT_GITHUB_LINK));
+        //Assert
         assertThat(info).isNull();
     }
 
@@ -78,16 +88,24 @@ public class GitHubInfoProviderTest {
     @DisplayName("GitHub repository link test")
     @SneakyThrows
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
+        //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(LINK))).isTrue();
+        //Act
+        boolean response = client.isValidated(new URL(LINK));
+        //Assert
+        assertThat(response).isTrue();
     }
 
     @Test
     @DisplayName("Not GitHub repository link test")
     @SneakyThrows
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
+        //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        assertThat(client.isValidated(new URL(NOT_GITHUB_LINK))).isFalse();
+        //Act
+        boolean response = client.isValidated(new URL(NOT_GITHUB_LINK));
+        //Assert
+        assertThat(response).isFalse();
     }
 
     @AfterEach

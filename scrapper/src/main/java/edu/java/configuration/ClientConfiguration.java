@@ -28,7 +28,8 @@ public class ClientConfiguration {
             return new GitHubInfoProvider();
         }
         return new GitHubInfoProvider(githubUrl);
-
+    }
+    
     @Bean
     public StackOverflowInfoProvider stackOverflowInfoProvider() {
         if (stackoverflowUrl.isEmpty()) {

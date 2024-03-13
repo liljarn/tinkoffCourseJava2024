@@ -2,6 +2,7 @@ package edu.java.client.stackoverflow;
 
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
+import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +43,7 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
             .onErrorReturn(new StackOverflowResponse(null))
             .block();
         if (info == null || info.equals(new StackOverflowResponse(null)) || info.items().length == 0) {
-            return null;
+            throw new LinkNotSupportedException(url);
         }
         return new LinkInfo(url, info.items()[0].title(), info.items()[0].lastActivityDate());
     }

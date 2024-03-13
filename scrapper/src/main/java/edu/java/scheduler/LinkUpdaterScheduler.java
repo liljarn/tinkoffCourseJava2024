@@ -6,9 +6,10 @@ import edu.java.client.dto.LinkInfo;
 import edu.java.dto.ChatLinkResponse;
 import edu.java.dto.LinkData;
 import edu.java.dto.client.LinkUpdate;
+import edu.java.dto.request.RemoveLinkRequest;
+import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
-import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,10 +42,7 @@ public class LinkUpdaterScheduler {
             for (ClientInfoProvider client : clientInfoProviders) {
                 if (client.isValidated(data.url())) {
                     LinkInfo info = client.fetchData(data.url());
-                    log.info(info.lastActivityDate());
-                    log.info(data.updateTime());
                     if (info.lastActivityDate().isAfter(data.updateTime())) {
-                        log.info(info);
                         linkRepository.updateLink(info);
                         botClient.sendUpdate(update);
                     }

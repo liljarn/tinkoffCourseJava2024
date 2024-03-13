@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.BotUpdateListener;
 import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandStart;
+import edu.java.bot.processor.MessageProcessor;
+import edu.java.bot.processor.Processor;
 import edu.java.bot.sender.MessageSender;
 import edu.java.bot.sender.Sender;
 import edu.java.bot.service.command.CommandService;
@@ -24,7 +26,8 @@ public class BotUpdateListenerTest {
         List<Command> commands = List.of(new CommandStart(service));
         List<Update> updates = List.of(mockUpdate);
         Sender sender = Mockito.mock(MessageSender.class);
-        BotUpdateListener listener = new BotUpdateListener(commands, sender, service);
+        Processor processor = new MessageProcessor(commands);
+        BotUpdateListener listener = new BotUpdateListener(processor, sender);
         //Act
         listener.process(updates);
         //Assert
@@ -42,7 +45,8 @@ public class BotUpdateListenerTest {
         List<Command> commands = List.of(new CommandStart(service));
         List<Update> updates = List.of(mockUpdate);
         Sender sender = Mockito.mock(MessageSender.class);
-        BotUpdateListener listener = new BotUpdateListener(commands, sender, service);
+        Processor processor = new MessageProcessor(commands);
+        BotUpdateListener listener = new BotUpdateListener(processor, sender);
         //Act
         listener.process(updates);
         //Assert

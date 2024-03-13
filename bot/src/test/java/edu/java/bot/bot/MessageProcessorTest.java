@@ -51,8 +51,8 @@ public class MessageProcessorTest {
     }
 
     @Test
-    @DisplayName("Not a command test")
-    public void process_shouldReturnWrongMessage_whenCommandWas() {
+    @DisplayName("Start command test")
+    public void process_shouldReturnStartMessage_whenCommandStartWasSent() {
         //Arrange
         CommandService service = Mockito.mock(CommandService.class);
         Mockito.doNothing().when(service).registerChat(1L);

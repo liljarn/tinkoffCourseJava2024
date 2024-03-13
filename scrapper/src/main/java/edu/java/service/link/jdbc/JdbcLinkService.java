@@ -5,8 +5,10 @@ import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
+import edu.java.exceptions.ChatNotAuthorizedException;
 import edu.java.exceptions.LinkAlreadyTrackedException;
 import edu.java.exceptions.LinkNotSupportedException;
+import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import edu.java.service.link.LinkService;
@@ -20,17 +22,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class JdbcLinkService implements LinkService {
     private final LinkRepository linkRepository;
     private final ChatLinkRepository chatLinkRepository;
+    private final ChatRepository chatRepository;
     private final List<ClientInfoProvider> clients;
 
     @Override
     @Transactional(readOnly = true)
     public ListLinksResponse getAllLinks(Long chatId) {
-        return linkRepository.findAll(chatId);
+        if (chatRepository.isInTable(chatId)) {
+            return linkRepository.findAll(chatId);
+        }
+        throw new ChatNotAuthorizedException();
     }
 
     @Override
     @Transactional
     public LinkResponse addLink(Long chatId, AddLinkRequest addLinkRequest) {
+        if (!chatRepository.isInTable(chatId)) {
+            throw new ChatNotAuthorizedException();
+        }
         for (ClientInfoProvider client : clients) {
             if (client.isValidated(addLinkRequest.link())) {
                 Long linkId = linkRepository.getLinkId(addLinkRequest.link().toString());
@@ -38,6 +47,7 @@ public class JdbcLinkService implements LinkService {
                     throw new LinkAlreadyTrackedException();
                 }
                 if (linkId == 0) {
+                    client.fetchData(addLinkRequest.link());
                     LinkResponse response = linkRepository.add(chatId, addLinkRequest);
                     chatLinkRepository.add(chatId, response.id());
                     return response;
@@ -52,6 +62,9 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
+        if (!chatRepository.isInTable(chatId)) {
+            throw new ChatNotAuthorizedException();
+        }
         LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
         if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
             return linkRepository.remove(chatId, removeLinkRequest);

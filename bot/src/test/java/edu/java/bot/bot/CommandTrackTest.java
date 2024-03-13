@@ -6,12 +6,14 @@ import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandTrack;
 import edu.java.bot.dto.client.AddLinkRequest;
 import edu.java.bot.dto.client.LinkResponse;
+import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.service.command.CommandService;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import static edu.java.bot.utils.MessageConstants.GITHUB_LINK;
+import org.springframework.http.HttpStatus;
+import static edu.java.bot.bot.TestUtils.GITHUB_LINK;
 import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND;
 import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND_ONLY;
 import static edu.java.bot.utils.MessageConstants.TRACK_WRONG_TEXT;
@@ -47,6 +49,22 @@ public class CommandTrackTest {
         //Assert
         assertThat(message.getParameters().get("text"))
             .isEqualTo("Вебсайт " + GITHUB_LINK + " теперь отслеживается.");
+    }
+
+    @Test
+    @DisplayName("Command /track with link test")
+    public void handle_returnsExceptionMessage_whenExceptionWasThrown() {
+        //Arrange
+        CommandService service = Mockito.mock(CommandService.class);
+        ScrapperException e = new ScrapperException("desc", HttpStatus.CONFLICT, "message");
+        Mockito.doThrow(e).when(service).addLink(1L, new AddLinkRequest(URI.create(GITHUB_LINK)));
+        Update mockUpdate = TestUtils.createMockUpdate(TRACK_COMMAND + " " + GITHUB_LINK, 1L);
+        Command command = new CommandTrack(service);
+        //Act
+        SendMessage message = command.handle(mockUpdate);
+        //Assert
+        assertThat(message.getParameters().get("text"))
+            .isEqualTo(e.getMessage());
     }
 
     @Test

@@ -4,6 +4,7 @@ import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import java.net.URI;
 import java.util.regex.Pattern;
+import edu.java.exceptions.LinkNotSupportedException;
 import org.springframework.beans.factory.annotation.Value;
 
 public class GitHubInfoProvider extends WebClientInfoProvider {
@@ -40,7 +41,7 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
             .onErrorReturn(new GitHubInfo(null, null))
             .block();
         if (info == null || info.equals(new GitHubInfo(null, null))) {
-            return null;
+            throw new LinkNotSupportedException(url);
         }
         return new LinkInfo(url, info.name(), info.update());
     }

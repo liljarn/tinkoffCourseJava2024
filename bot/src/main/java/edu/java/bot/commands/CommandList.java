@@ -3,6 +3,7 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.dto.client.ListLinksResponse;
+import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.keyboard.InlineKeyboardBuilder;
 import edu.java.bot.service.command.CommandService;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,16 @@ public class CommandList implements Command {
     public SendMessage handle(Update update) {
         long chatId = update.message().chat().id();
         if (update.message().text().equals(command())) {
-            ListLinksResponse links = commandService.getLinks(chatId);
-            if (links.size() == 0) {
-                return new SendMessage(chatId, EMPTY_TRACK_LIST);
+            try {
+                ListLinksResponse links = commandService.getLinks(chatId);
+                if (links.size() == 0) {
+                    return new SendMessage(chatId, EMPTY_TRACK_LIST);
+                }
+                return new SendMessage(chatId, LIST_COMMANDS_TEXT)
+                    .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(links.links()));
+            } catch (ScrapperException e) {
+                return new SendMessage(chatId, e.getMessage());
             }
-            return new SendMessage(chatId, LIST_COMMANDS_TEXT)
-                .replyMarkup(InlineKeyboardBuilder.createUrlKeyboard(links.links()));
         }
         return new SendMessage(chatId, LIST_WRONG_TEXT);
     }

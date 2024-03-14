@@ -10,11 +10,13 @@ spring:
   liquibase:
     enabled: false
   database:
+    check-time-minutes: 5
+  datasource:
     driver: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
-    password: ${PASSWORD:}
-    check-time-minutes: 5
+    password: postgres
+
 
 server:
   port: 8080

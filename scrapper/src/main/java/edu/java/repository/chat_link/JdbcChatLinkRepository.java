@@ -6,25 +6,17 @@ import edu.java.repository.link.mapper.LinkResponseMapper;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-@Log4j2
 public class JdbcChatLinkRepository implements ChatLinkRepository {
-    @Value("${spring.database.check-time-minutes}")
-    private int minutesCheckTime;
     private final JdbcTemplate jdbcTemplate;
     private final ChatLinkExtractor extractor = new ChatLinkExtractor();
 
     @Override
-    public List<ChatLinkResponse> findAll() {
-        OffsetDateTime time = OffsetDateTime.now();
-        time = time.minusMinutes(minutesCheckTime);
-        log.info(time);
+    public List<ChatLinkResponse> findAllFiltered(OffsetDateTime time) {
         return jdbcTemplate.query(
             "SELECT link.link_id, link.checked_at, chat_link.chat_id"
             + " from link JOIN chat_link ON chat_link.link_id = link.link_id"

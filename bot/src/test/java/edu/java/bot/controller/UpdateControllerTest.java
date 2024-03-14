@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UpdateController.class)
 public class UpdateControllerTest {
+    //Given
     @MockBean UpdateService updateService;
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper objectMapper;
@@ -26,31 +27,40 @@ public class UpdateControllerTest {
     @DisplayName("Correct request updateLink test")
     @SneakyThrows
     public void updateLink_shouldReturnOk_whenRequestIsCorrect() {
+        //Arrange
         LinkUpdate linkUpdate = new LinkUpdate(3L, URI.create("google.com"), "test", List.of(1L));
         Mockito.doNothing().when(updateService).updateLink(linkUpdate);
-        mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json")
-            .content(objectMapper.writeValueAsString(linkUpdate)))
-            .andExpect(status().isOk());
+        //Act
+        var act = mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json")
+            .content(objectMapper.writeValueAsString(linkUpdate)));
+        //Assert
+        act.andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("No body updateLink test")
     @SneakyThrows
     public void updateLink_shouldReturnBadRequest_whenNoBody() {
+        //Arrange
         LinkUpdate linkUpdate = new LinkUpdate(3L, URI.create("google.com"), "test", List.of(1L));
         Mockito.doNothing().when(updateService).updateLink(linkUpdate);
-        mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json"))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @DisplayName("Wrong body updateLink test")
     @SneakyThrows
     public void updateLink_shouldReturnBadRequest_whenWrongBody() {
+        //Arrange
         LinkUpdate linkUpdate = new LinkUpdate(3L, URI.create("google.com"), "test", List.of(1L));
         Mockito.doNothing().when(updateService).updateLink(linkUpdate);
-        mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json")
-            .content("{}"))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json")
+            .content("{}"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 }

@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(LinkController.class)
 public class LinkControllerTest {
+    //Given
     @MockBean
     private LinkService linkService;
     @Autowired
@@ -38,13 +39,15 @@ public class LinkControllerTest {
     @SneakyThrows
     @DisplayName("Correct request getAllLinks Test")
     public void getAllLinks_shouldReturnOk_whenRequestIsCorrect() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         Mockito.when(linkService.getAllLinks(1L))
             .thenReturn(new ListLinksResponse(List.of(new LinkResponse(linkId, url)), 1));
-
-        mvc.perform(get("/links").header("Tg-Chat-Id", 1L).contentType("application/json"))
-            .andExpect(status().isOk())
+        //Act
+        var act = mvc.perform(get("/links").header("Tg-Chat-Id", 1L).contentType("application/json"));
+        //Assert
+        act.andExpect(status().isOk())
             .andExpect(jsonPath("$.links[0].id").value(linkId))
             .andExpect(jsonPath("$.links[0].url").value(url.toString()));
     }
@@ -53,30 +56,50 @@ public class LinkControllerTest {
     @DisplayName("No header getAllLinks test")
     @SneakyThrows
     public void getAllLinks_shouldReturnBadRequest_whenNoHeader() {
-        mvc.perform(get("/links").contentType("application/json"))
-            .andExpect(status().isBadRequest()).andReturn();
+        //Arrange
+        long linkId = 123;
+        URI url = URI.create("google.com");
+        Mockito.when(linkService.getAllLinks(1L))
+            .thenReturn(new ListLinksResponse(List.of(new LinkResponse(linkId, url)), 1));
+        //Act
+        var act = mvc.perform(get("/links").contentType("application/json"));
+        //Assert
+        act.andExpect(status().isBadRequest()).andReturn();
     }
 
     @Test
     @DisplayName("Wrong header getAllLinks test")
     @SneakyThrows
     public void getAllLinks_shouldReturnBadRequest_whenHeaderIsWrong() {
-        mvc.perform(get("/links").contentType("application/json").header("Tg-Chat-Id", "asd"))
-            .andExpect(status().isBadRequest()).andReturn();
+        //Arrange
+        long linkId = 123;
+        URI url = URI.create("google.com");
+        Mockito.when(linkService.getAllLinks(1L))
+            .thenReturn(new ListLinksResponse(List.of(new LinkResponse(linkId, url)), 1));
+        //Act
+        var act = mvc.perform(get("/links").contentType("application/json").header("Tg-Chat-Id", "asd"));
+        //Assert
+        act.andExpect(status().isBadRequest()).andReturn();
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Correct request deleteLink test")
     public void deleteLink_shouldReturnOk_whenRequestIsCorrect() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         Mockito.when(linkService.deleteLink(1L, removeLinkRequest))
             .thenReturn(new LinkResponse(linkId, url));
-        mvc.perform(delete("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
-                .content(objectMapper.writeValueAsString(removeLinkRequest)))
-            .andExpect(status().isOk())
+        //Act
+        var act = mvc
+            .perform(delete("/links")
+                .header("Tg-Chat-Id", 1L)
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(removeLinkRequest)));
+        //Assert
+        act.andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(linkId))
             .andExpect(jsonPath("$.url").value(url.toString()));
     }
@@ -85,85 +108,92 @@ public class LinkControllerTest {
     @SneakyThrows
     @DisplayName("No header deleteLink test")
     public void deleteLink_shouldReturnBadRequest_whenNoHeader() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         Mockito.when(linkService.deleteLink(1L, removeLinkRequest))
             .thenReturn(new LinkResponse(linkId, url));
-        mvc.perform(delete("/links").contentType("application/json")
-                .content(objectMapper.writeValueAsString(removeLinkRequest)))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(delete("/links").contentType("application/json")
+            .content(objectMapper.writeValueAsString(removeLinkRequest)));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Wrong header deleteLink test")
     public void deleteLink_shouldReturnBadRequest_whenWrongHeader() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         Mockito.when(linkService.deleteLink(1L, removeLinkRequest))
             .thenReturn(new LinkResponse(linkId, url));
-        mvc.perform(delete("/links").header("Tg-Chat-Id", "a").contentType("application/json")
-                .content(objectMapper.writeValueAsString(removeLinkRequest)))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(delete("/links").header("Tg-Chat-Id", "a")
+            .contentType("application/json")
+            .content(objectMapper.writeValueAsString(removeLinkRequest)));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("No body deleteLink test")
     public void deleteLink_shouldReturnBadRequest_whenNoBody() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         Mockito.when(linkService.deleteLink(1L, removeLinkRequest))
             .thenReturn(new LinkResponse(linkId, url));
-        mvc.perform(delete("/links").header("Tg-Chat-Id", 1L).contentType("application/json"))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc
+            .perform(delete("/links")
+                .header("Tg-Chat-Id", 1L)
+                .contentType("application/json"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Wrong body deleteLink test")
     public void deleteLink_shouldReturnBadRequest_whenWrongBody() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         Mockito.when(linkService.deleteLink(1L, removeLinkRequest))
             .thenReturn(new LinkResponse(linkId, url));
-        mvc.perform(delete("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
-                .content("{}"))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc
+            .perform(delete("/links")
+                .header("Tg-Chat-Id", 1L)
+                .contentType("application/json")
+                .content("{}"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
-
-//    @Test
-//    @SneakyThrows
-//    @DisplayName("Correct request deleteLink test")
-//    public void deleteLink_shouldReturnOk_whenRequestIsCorrect() {
-//        long linkId = 123;
-//        URI url = URI.create("google.com");
-//        RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
-//        Mockito.when(linkService.deleteLink(1L, removeLinkRequest))
-//            .thenThrow(new );
-//        mvc.perform(delete("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
-//                .content(objectMapper.writeValueAsString(removeLinkRequest)))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$.id").value(linkId))
-//            .andExpect(jsonPath("$.url").value(url.toString()));
-//    }
 
     @Test
     @SneakyThrows
     @DisplayName("Correct request addLink test")
     public void addLink_shouldReturnOk_whenRequestIsCorrect() {
+        //Arrange
         long linkId = 123;
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenReturn(new LinkResponse(linkId, url));
-        mvc.perform(post("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
-                .content(objectMapper.writeValueAsString(addLinkRequest)))
-            .andExpect(status().isOk())
+        //Act
+        var act = mvc.perform(post("/links")
+            .header("Tg-Chat-Id", 1L).contentType("application/json")
+            .content(objectMapper.writeValueAsString(addLinkRequest)));
+        //Assert
+        act.andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(linkId))
             .andExpect(jsonPath("$.url").value(url.toString()));
     }
@@ -172,78 +202,97 @@ public class LinkControllerTest {
     @SneakyThrows
     @DisplayName("Not supported link addLink test")
     public void addLink_shouldReturnBadRequest_whenLinkIsNotSupported() {
+        //Arrange
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenThrow(new LinkNotSupportedException(url));
-        mvc.perform(post("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
-                .content(objectMapper.writeValueAsString(addLinkRequest)))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(post("/links")
+            .header("Tg-Chat-Id", 1L).contentType("application/json")
+            .content(objectMapper.writeValueAsString(addLinkRequest)));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Tracked link addLink test")
     public void addLink_shouldReturnConflict_whenLinkIsAlreadyTracked() {
+        //Arrange
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenThrow(new LinkAlreadyTrackedException());
-        mvc.perform(post("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
-                .content(objectMapper.writeValueAsString(addLinkRequest)))
-            .andExpect(status().isConflict());
+        //Act
+        var act = mvc.perform(post("/links").header("Tg-Chat-Id", 1L).contentType("application/json")
+            .content(objectMapper.writeValueAsString(addLinkRequest)));
+        //Assert
+        act.andExpect(status().isConflict());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("No header addLink test")
     public void addLink_shouldReturnBadRequest_whenNoHeader() {
+        //Arrange
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenThrow(new LinkNotSupportedException(url));
-        mvc.perform(post("/links").contentType("application/json")
-                .content(objectMapper.writeValueAsString(addLinkRequest)))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(post("/links").contentType("application/json")
+            .content(objectMapper.writeValueAsString(addLinkRequest)));
+        //Arrange
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Wrong header addLink test")
     public void addLink_shouldReturnBadRequest_whenWrongHeader() {
+        //Arrange
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenThrow(new LinkNotSupportedException(url));
-        mvc.perform(post("/links").contentType("application/json")
-                .header("Tg-Chat-Id", "")
-                .content(objectMapper.writeValueAsString(addLinkRequest)))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(post("/links").contentType("application/json")
+            .header("Tg-Chat-Id", "")
+            .content(objectMapper.writeValueAsString(addLinkRequest)));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Wrong header addLink test")
     public void addLink_shouldReturnBadRequest_whenNoBody() {
+        //Arrange
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenThrow(new LinkNotSupportedException(url));
-        mvc.perform(post("/links").contentType("application/json").header("Tg-Chat-Id", 1L))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(post("/links").contentType("application/json").header("Tg-Chat-Id", 1L));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     @DisplayName("Wrong header addLink test")
     public void addLink_shouldReturnBadRequest_whenWrongBody() {
+        //Arrange
         URI url = URI.create("google.com");
         AddLinkRequest addLinkRequest = new AddLinkRequest(url);
         Mockito.when(linkService.addLink(1L, addLinkRequest))
             .thenThrow(new LinkNotSupportedException(url));
-        mvc.perform(post("/links").contentType("application/json")
-                .header("Tg-Chat-Id", 1L)
-                .content("{}"))
-            .andExpect(status().isBadRequest());
+        //Act
+        var act = mvc.perform(post("/links").contentType("application/json")
+            .header("Tg-Chat-Id", 1L)
+            .content("{}"));
+        //Assert
+        act.andExpect(status().isBadRequest());
     }
 }

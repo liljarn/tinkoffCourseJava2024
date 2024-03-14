@@ -2,10 +2,8 @@ package edu.java.scrapper.repository;
 
 import edu.java.repository.chat.ChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -70,10 +67,5 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         boolean inTable = chatRepository.isInTable(chatId);
         //Assert
         assertThat(inTable).isFalse();
-    }
-
-    @AfterAll
-    public static void teardown() {
-        POSTGRES.close();
     }
 }

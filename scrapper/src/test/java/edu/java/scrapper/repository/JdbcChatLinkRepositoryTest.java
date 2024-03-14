@@ -6,10 +6,8 @@ import edu.java.scrapper.IntegrationEnvironment;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
@@ -17,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -162,10 +159,5 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
         List<ChatLinkResponse> response = repository.findAllFiltered(time);
         //Assert
         assertThat(response).isEqualTo(expected);
-    }
-
-    @AfterAll
-    public static void closeTestContainer() {
-        POSTGRES.close();
     }
 }

@@ -13,10 +13,8 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
@@ -24,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -133,10 +130,5 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         LinkData response = linkRepository.getData(linkId);
         //Assert
         assertThat(response).extracting(update -> update.updateTime().format(formatter)).isEqualTo(expectedTime);
-    }
-
-    @AfterAll
-    public static void closeTestContainer() {
-        POSTGRES.close();
     }
 }

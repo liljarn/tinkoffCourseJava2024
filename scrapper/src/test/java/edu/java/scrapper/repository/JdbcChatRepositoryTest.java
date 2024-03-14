@@ -3,23 +3,19 @@ package edu.java.scrapper.repository;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat.JdbcChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
 public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     private static JdbcTemplate jdbcTemplate;
+    private static ChatRepository chatRepository;
 
     //Arrange
     @BeforeAll
@@ -30,6 +26,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         dataSource.setUsername(POSTGRES.getUsername());
         dataSource.setPassword(POSTGRES.getPassword());
         jdbcTemplate = new JdbcTemplate(dataSource);
+        chatRepository = new JdbcChatRepository(jdbcTemplate);
     }
 
     @Test
@@ -38,19 +35,11 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @SneakyThrows
     public void add_shouldCorrectlyAddIdInChatTable_whenIdIsNotInTable() {
         //Arrange
-        ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
         long chatId = 1L;
-        Connection connection = POSTGRES.createConnection("");
-        PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM chat WHERE chat_id = (?)");
-        statement.setLong(1, chatId);
         //Act
         chatRepository.add(chatId);
         //Assert
-        ResultSet rs = statement.executeQuery();
-        long idCount = -1;
-        if (rs.next()) {
-            idCount = rs.getLong(1);
-        }
+        Long idCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM chat WHERE chat_id = ?", Long.class, chatId);
         assertThat(idCount).isEqualTo(1L);
     }
 
@@ -60,22 +49,12 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @SneakyThrows
     public void remove_shouldDeleteIdFromChatTable_whenIdExists() {
         //Arrange
-        ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
-        Connection connection = POSTGRES.createConnection("");
         long chatId = 1879L;
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO chat (chat_id) VALUES (?)");
-        statement.setLong(1, chatId);
-        statement.executeUpdate();
+        jdbcTemplate.update("INSERT INTO chat (chat_id) VALUES (?)", chatId);
         //Act
         chatRepository.remove(chatId);
         //Assert
-        statement = connection.prepareStatement("SELECT COUNT(*) FROM chat WHERE chat_id = (?)");
-        statement.setLong(1, chatId);
-        ResultSet rs = statement.executeQuery();
-        long idCount = -1;
-        if (rs.next()) {
-            idCount = rs.getLong(1);
-        }
+        Long idCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM chat WHERE chat_id = ?", Long.class, chatId);
         assertThat(idCount).isEqualTo(0L);
     }
 
@@ -85,12 +64,8 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @SneakyThrows
     public void isInTable_shouldReturnTrue_whenChatIdExists() {
         //Arrange
-        ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
-        Connection connection = POSTGRES.createConnection("");
         long chatId = 2000L;
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO chat (chat_id) VALUES (?)");
-        statement.setLong(1, chatId);
-        statement.executeUpdate();
+        jdbcTemplate.update("INSERT INTO chat (chat_id) VALUES (?)", chatId);
         //Act
         boolean inTable = chatRepository.isInTable(chatId);
         //Assert
@@ -102,7 +77,6 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Rollback
     public void isInTable_shouldReturnFalse_whenChatIdDoesNotExists() {
         //Arrange
-        ChatRepository chatRepository = new JdbcChatRepository(jdbcTemplate);
         long chatId = 123L;
         //Act
         boolean inTable = chatRepository.isInTable(chatId);

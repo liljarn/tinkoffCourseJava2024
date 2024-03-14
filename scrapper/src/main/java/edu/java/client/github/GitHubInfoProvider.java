@@ -2,9 +2,9 @@ package edu.java.client.github;
 
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
+import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.regex.Pattern;
-import edu.java.exceptions.LinkNotSupportedException;
 import org.springframework.beans.factory.annotation.Value;
 
 public class GitHubInfoProvider extends WebClientInfoProvider {

@@ -18,7 +18,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.annotation.Rollback;
@@ -47,7 +46,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     public void findAll_shouldReturnListLinksResponseWithEmptyList_whenChatDoesNotTrackAnyLink() {
         //Arrange
         Long chatId = 1L;
-        addChat();
+        jdbcTemplate.update("INSERT INTO chat (chat_id) VALUES (1)");
         //Act
         ListLinksResponse list = linkRepository.findAll(chatId);
         //Assert
@@ -61,7 +60,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         //Arrange
         Long chatId = 1L;
         Long linkId = 1L;
-        addChat();
+        jdbcTemplate.update("INSERT INTO chat (chat_id) VALUES (1)");
         String url = "google.com";
         jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
         jdbcTemplate.update("INSERT INTO chat_link (chat_id, link_id) VALUES (?, ?)", chatId, linkId);
@@ -76,11 +75,10 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    public void add_shouldCorrectlyAddLinkInLinkTable() {
+    public void add_shouldCorrectlyAddLinkInLinkTable_thenReturnLinkResponse() {
         //Arrange
         Long chatId = 1L;
         Long linkId = 1L;
-        addChat();
         String url = "google.com";
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
         LinkResponse expectedResponse = new LinkResponse(linkId, URI.create(url));
@@ -96,14 +94,12 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    public void remove_shouldCorrectlyRemoveLinkFromLinkTable() {
+    public void remove_shouldCorrectlyRemoveLinkFromLinkTable_thenReturnLinkResponse() {
         //Arrange
         Long chatId = 1L;
         Long linkId = 1L;
-        addChat();
         String url = "google.com";
         jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
-        jdbcTemplate.update("INSERT INTO chat_link (chat_id, link_id) VALUES (?, ?)", chatId, linkId);
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         LinkResponse expectedResponse = new LinkResponse(linkId, URI.create(url));
         //Act
@@ -119,9 +115,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     @SneakyThrows
-    public void updateLink_shouldCorrectlyUpdateDataInDb() {
+    public void updateLink_shouldCorrectlyUpdateDataInDb_whenLinkInTable() {
         //Arrange
-        addChat();
         String url = "google.com";
         String name = "title";
         jdbcTemplate.update("INSERT INTO link (url) VALUES (?)", url);
@@ -138,7 +133,6 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     public void getData_shouldReturnDataFromDb_whenLinkExists() {
         //Arrange
         Long linkId = 1L;
-        addChat();
         String url = "google.com";
         String name = "title";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -150,11 +144,6 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         LinkData response = linkRepository.getData(linkId);
         //Assert
         assertThat(response).extracting(update -> update.updateTime().format(formatter)).isEqualTo(expectedTime);
-    }
-
-    @SneakyThrows
-    private static void addChat() {
-        jdbcTemplate.update("INSERT INTO chat (chat_id) VALUES (1)");
     }
 
     @AfterEach

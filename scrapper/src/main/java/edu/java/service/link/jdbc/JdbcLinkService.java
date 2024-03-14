@@ -28,10 +28,7 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional(readOnly = true)
     public ListLinksResponse getAllLinks(Long chatId) {
-        if (chatRepository.isInTable(chatId)) {
-            return linkRepository.findAll(chatId);
-        }
-        throw new ChatNotAuthorizedException();
+        return linkRepository.findAll(chatId);
     }
 
     @Override
@@ -43,14 +40,14 @@ public class JdbcLinkService implements LinkService {
         for (ClientInfoProvider client : clients) {
             if (client.isValidated(addLinkRequest.link())) {
                 Long linkId = linkRepository.getLinkId(addLinkRequest.link().toString());
-                if (chatLinkRepository.isTracked(chatId, linkId)) {
-                    throw new LinkAlreadyTrackedException();
-                }
                 if (linkId == 0) {
                     client.fetchData(addLinkRequest.link());
                     LinkResponse response = linkRepository.add(chatId, addLinkRequest);
                     chatLinkRepository.add(chatId, response.id());
                     return response;
+                }
+                if (chatLinkRepository.isTracked(chatId, linkId)) {
+                    throw new LinkAlreadyTrackedException();
                 }
                 chatLinkRepository.add(chatId, linkId);
                 return new LinkResponse(linkId, linkRepository.getData(linkId).url());
@@ -62,9 +59,6 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
-        if (!chatRepository.isInTable(chatId)) {
-            throw new ChatNotAuthorizedException();
-        }
         LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
         if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
             return linkRepository.remove(chatId, removeLinkRequest);

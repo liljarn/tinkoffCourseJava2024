@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.dto.client.LinkResponse;
 import edu.java.bot.dto.client.RemoveLinkRequest;
-import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.keyboard.InlineKeyboardBuilder;
 import edu.java.bot.service.command.CommandService;
 import java.util.List;
@@ -45,16 +44,12 @@ public class CommandUntrack implements Command {
     }
 
     private SendMessage handleCommand(long chatId) {
-        try {
-            List<LinkResponse> links = service.getLinks(chatId).links();
-            if (links.isEmpty()) {
-                return new SendMessage(chatId, EMPTY_TRACK_LIST);
-            }
-            return new SendMessage(chatId, UNTRACK_MESSAGE)
-                .replyMarkup(InlineKeyboardBuilder.createCallbackKeyboard(links));
-        } catch (ScrapperException e) {
-            return new SendMessage(chatId, e.getMessage());
+        List<LinkResponse> links = service.getLinks(chatId).links();
+        if (links.isEmpty()) {
+            return new SendMessage(chatId, EMPTY_TRACK_LIST);
         }
+        return new SendMessage(chatId, UNTRACK_MESSAGE)
+            .replyMarkup(InlineKeyboardBuilder.createCallbackKeyboard(links));
     }
 
     private SendMessage handleCallback(Update update) {

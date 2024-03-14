@@ -6,8 +6,6 @@ import edu.java.client.dto.LinkInfo;
 import edu.java.dto.ChatLinkResponse;
 import edu.java.dto.LinkData;
 import edu.java.dto.client.LinkUpdate;
-import edu.java.dto.request.RemoveLinkRequest;
-import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import java.util.List;
@@ -30,6 +28,7 @@ public class LinkUpdaterScheduler {
     @Transactional
     public void update() {
         List<ChatLinkResponse> linksToChats = chatLinkRepository.findAll();
+        log.info(linksToChats);
         for (ChatLinkResponse linkToChats : linksToChats) {
             Long linkId = linkToChats.linkId();
             LinkData data = linkRepository.getData(linkId);
@@ -37,12 +36,13 @@ public class LinkUpdaterScheduler {
                 linkId,
                 data.url(),
                 "Ссылка была обновлена: ",
-                linkToChats.tgChatIds()
+                linkToChats.tgChatIds().stream().toList()
             );
             for (ClientInfoProvider client : clientInfoProviders) {
                 if (client.isValidated(data.url())) {
                     LinkInfo info = client.fetchData(data.url());
                     if (info.lastActivityDate().isAfter(data.updateTime())) {
+                        log.info("here");
                         linkRepository.updateLink(info);
                         botClient.sendUpdate(update);
                     }

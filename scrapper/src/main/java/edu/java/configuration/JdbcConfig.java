@@ -1,6 +1,7 @@
 package edu.java.configuration;
 
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,14 +11,22 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class JdbcConfig {
-    @SuppressWarnings("checkstyle:MultipleStringLiterals")
+    @Value("${spring.database.driver}")
+    private String driver;
+    @Value("${spring.database.url}")
+    private String url;
+    @Value("${spring.database.username}")
+    private String username;
+    @Value("${spring.database.password}")
+    private String password;
+
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/scrapper");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgres");
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         return dataSource;
     }
 

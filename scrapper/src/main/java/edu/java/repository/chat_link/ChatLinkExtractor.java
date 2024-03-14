@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -19,11 +20,9 @@ public class ChatLinkExtractor implements ResultSetExtractor<List<ChatLinkRespon
             Long tgChatId = resultSet.getLong("chat_id");
             ChatLinkResponse chatLinkResponse = chatLinkMap.computeIfAbsent(
                 linkId,
-                k -> new ChatLinkResponse(linkId, new ArrayList<>())
+                k -> new ChatLinkResponse(linkId, new HashSet<>())
             );
-            if (!chatLinkResponse.tgChatIds().contains(tgChatId)) {
-                chatLinkResponse.tgChatIds().add(tgChatId);
-            }
+            chatLinkResponse.tgChatIds().add(tgChatId);
             if (!result.contains(chatLinkResponse)) {
                 result.add(chatLinkResponse);
             }

@@ -1,6 +1,6 @@
 package edu.java.dto;
 
-import java.util.List;
+import java.util.Set;
 
-public record ChatLinkResponse(Long linkId, List<Long> tgChatIds) {
+public record ChatLinkResponse(Long linkId, Set<Long> tgChatIds) {
 }

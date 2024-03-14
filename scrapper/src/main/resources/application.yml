@@ -1,7 +1,7 @@
 app:
   scheduler:
     enable: true
-    interval: 5s
+    interval: 10s
     force-check-delay: 5s
 
 spring:
@@ -9,6 +9,12 @@ spring:
     name: scrapper
   liquibase:
     enabled: false
+  database:
+    driver: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: ${PASSWORD:}
+    check-time-minutes: 5
 
 server:
   port: 8080

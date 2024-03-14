@@ -8,6 +8,7 @@ import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.repository.link.mapper.LinkDataMapper;
 import edu.java.repository.link.mapper.LinkResponseMapper;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -55,8 +56,9 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public void updateLink(LinkInfo info) {
-        jdbcTemplate.update("UPDATE link SET last_update_time = (?), name = (?)"
-            + " WHERE url = (?)", info.lastActivityDate(), info.title(), info.url().toString());
+        OffsetDateTime curTime = OffsetDateTime.now();
+        jdbcTemplate.update("UPDATE link SET last_update_time = (?), name = (?), checked_at = (?)"
+            + " WHERE url = (?)", info.lastActivityDate(), info.title(), curTime, info.url().toString());
     }
 
     @Override

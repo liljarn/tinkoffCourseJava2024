@@ -3,9 +3,11 @@ package edu.java.repository.chat_link;
 import edu.java.dto.ChatLinkResponse;
 import edu.java.dto.response.LinkResponse;
 import edu.java.repository.link.mapper.LinkResponseMapper;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,12 +15,23 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 @Log4j2
 public class JdbcChatLinkRepository implements ChatLinkRepository {
+    @Value("${spring.database.check-time-minutes}")
+    private int minutesCheckTime;
     private final JdbcTemplate jdbcTemplate;
     private final ChatLinkExtractor extractor = new ChatLinkExtractor();
 
     @Override
     public List<ChatLinkResponse> findAll() {
-        return jdbcTemplate.query("SELECT link_id, chat_id FROM chat_link", extractor);
+        OffsetDateTime time = OffsetDateTime.now();
+        time = time.minusMinutes(minutesCheckTime);
+        log.info(time);
+        return jdbcTemplate.query(
+            "SELECT link.link_id, link.checked_at, chat_link.chat_id"
+            + " from link JOIN chat_link ON chat_link.link_id = link.link_id"
+            + " WHERE checked_at < ? LIMIT 10",
+            extractor,
+            time
+        );
     }
 
     @Override
@@ -31,8 +44,8 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
         LinkResponse response =
             jdbcTemplate.queryForObject(
                 "SELECT link.link_id, link.url from link "
-                    + "JOIN chat_link ON chat_link.link_id = link.link_id "
-                    + "WHERE chat_link.chat_id = (?) AND link.link_id = (?)",
+                + "JOIN chat_link ON chat_link.link_id = link.link_id "
+                + "WHERE chat_link.chat_id = (?) AND link.link_id = (?)",
                 new LinkResponseMapper(),
                 chatId,
                 linkId

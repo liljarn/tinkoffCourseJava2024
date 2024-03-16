@@ -10,7 +10,7 @@ spring:
   liquibase:
     enabled: false
   database:
-    check-time-minutes: 5
+    check-time-minutes: 0
   datasource:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres

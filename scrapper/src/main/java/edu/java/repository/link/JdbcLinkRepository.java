@@ -57,8 +57,8 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public void updateLink(LinkInfo info) {
         OffsetDateTime curTime = OffsetDateTime.now();
-        jdbcTemplate.update("UPDATE link SET last_update_time = (?), name = (?), checked_at = (?)"
-            + " WHERE url = (?)", info.lastActivityDate(), info.title(), curTime, info.url().toString());
+        jdbcTemplate.update("UPDATE link SET last_update_time = (?), checked_at = (?)"
+            + " WHERE url = (?)", info.lastActivityDate(), curTime, info.url().toString());
     }
 
     @Override

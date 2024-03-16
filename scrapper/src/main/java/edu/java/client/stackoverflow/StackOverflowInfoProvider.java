@@ -30,7 +30,7 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
     }
 
     @Override
-    public LinkInfo fetchData(URI url) {
+    public List<LinkInfo> fetchData(URI url) {
         Matcher matcher = STACKOVERFLOW_PATTERN.matcher(url.toString());
         if (!matcher.matches()) {
             return null;
@@ -47,6 +47,8 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
         if (info == null || info.equals(new StackOverflowResponse(null)) || info.items().length == 0) {
             throw new LinkNotSupportedException(url);
         }
-        return new LinkInfo(url, info.items()[0].title(), info.items()[0].lastActivityDate());
+        List<LinkInfo> listInfo = new ArrayList<>();
+        listInfo.add(new LinkInfo(url, info.items()[0].title(), info.items()[0].lastActivityDate()));
+        return listInfo;
     }
 }

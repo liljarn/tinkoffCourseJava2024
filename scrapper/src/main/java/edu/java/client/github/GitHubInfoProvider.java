@@ -32,15 +32,15 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
         if (!isValidated(url)) {
             return null;
         }
-        GitHubInfo info = webClient
+        GitHubEvent[] info = webClient
             .get()
             .uri(url.getPath())
             .header("Authorization", "Bearer " + token)
             .retrieve()
-            .bodyToMono(GitHubInfo.class)
-            .onErrorReturn(new GitHubInfo(null, null))
+            .bodyToMono(GitHubEvent[].class)
+            .onErrorReturn(null)
             .block();
-        if (info == null || info.equals(new GitHubInfo(null, null))) {
+        if (info == null) {
             throw new LinkNotSupportedException(url);
         }
         return new LinkInfo(url, info.name(), info.update());

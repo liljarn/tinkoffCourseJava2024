@@ -6,6 +6,7 @@ import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -31,7 +32,7 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
     }
 
     @Override
-    public List<LinkInfo> fetchData(URI url) {
+    public LinkInfo fetchData(URI url) {
         if (!isValidated(url)) {
             return null;
         }
@@ -46,12 +47,9 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
         if (info == null || info.length == 0) {
             throw new LinkNotSupportedException(url);
         }
-        List<GitHubEvent> events = Arrays.stream(info).toList().stream()
-            .filter(event -> event.type().equals("IssuesEvent") || event.type().equals("PushEvent"))
-            .toList();
-        return events.stream()
-            .map(event -> new LinkInfo(url, getDescription(event.type(), event), event.updateTime()))
-            .toList();
+        GitHubEvent githubEvent = Arrays.stream(info).toList().stream()
+            .filter(event -> event.type().equals("IssuesEvent") || event.type().equals("PushEvent")).findFirst().get();
+        return new LinkInfo(url, getDescription(githubEvent.type(), githubEvent), githubEvent.updateTime());
         //return new LinkInfo(url, info.name(), info.update());
     }
 

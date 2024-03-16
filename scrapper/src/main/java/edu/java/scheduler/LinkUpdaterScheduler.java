@@ -9,7 +9,6 @@ import edu.java.dto.client.LinkUpdate;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import java.time.OffsetDateTime;
-import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,13 +40,9 @@ public class LinkUpdaterScheduler {
             LinkData data = linkRepository.getData(linkId);
             for (ClientInfoProvider client : clientInfoProviders) {
                 if (client.isValidated(data.url())) {
-                    List<LinkInfo> listLinkInfo = client.fetchData(data.url())
-                        .stream()
-                        .filter(linkInfo -> linkInfo.lastActivityDate().isAfter(data.updateTime()))
-                        .sorted(Comparator.comparing(LinkInfo::lastActivityDate))
-                        .toList();
-                    log.info(listLinkInfo);
-                    for (LinkInfo info : listLinkInfo) {
+                    LinkInfo info = client.fetchData(data.url());
+                    log.info(info);
+                    if (info.lastActivityDate().isAfter(data.updateTime())) {
                         LinkUpdate update = new LinkUpdate(
                             linkId,
                             data.url(),
@@ -55,9 +50,7 @@ public class LinkUpdaterScheduler {
                             linkToChats.tgChatIds().stream().toList()
                         );
                         botClient.sendUpdate(update);
-                    }
-                    if (!listLinkInfo.isEmpty()) {
-                        linkRepository.updateLink(listLinkInfo.get(listLinkInfo.size() - 1));
+                        linkRepository.updateLink(info);
                     }
                 }
             }

@@ -57,7 +57,12 @@ public class LinkUpdaterScheduler {
                         botClient.sendUpdate(update);
                     }
                     if (!listLinkInfo.isEmpty()) {
-                        linkRepository.updateLink(listLinkInfo.get(listLinkInfo.size() - 1));
+                        OffsetDateTime curTime = OffsetDateTime.now();
+                        linkRepository.updateLink(
+                            data.url(),
+                            curTime,
+                            listLinkInfo.get(listLinkInfo.size() - 1).lastActivityDate()
+                        );
                     }
                 }
             }

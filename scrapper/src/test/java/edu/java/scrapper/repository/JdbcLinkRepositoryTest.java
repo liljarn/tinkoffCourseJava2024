@@ -1,6 +1,5 @@
 package edu.java.scrapper.repository;
 
-import edu.java.client.dto.LinkInfo;
 import edu.java.dto.LinkData;
 import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
@@ -10,9 +9,11 @@ import edu.java.repository.link.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Log4j2
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -103,14 +105,20 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     public void updateLink_shouldCorrectlyUpdateDataInDb_whenLinkInTable() {
         //Arrange
         String url = "google.com";
-        String name = "title";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        OffsetDateTime time = OffsetDateTime.now();
+        String expectedTime = time.format(formatter);
         Long linkId =
             jdbcTemplate.queryForObject("INSERT INTO link (url) VALUES (?) RETURNING link_id", Long.class, url);
         //Act
-        linkRepository.updateLink(new LinkInfo(URI.create(url), name, OffsetDateTime.MIN));
+        linkRepository.updateLink(URI.create(url), time, time);
         //Assert
-        assertThat(jdbcTemplate.queryForObject("SELECT name FROM link WHERE url = (?)", String.class, url)).isEqualTo(
-            name);
+        OffsetDateTime update = jdbcTemplate.queryForObject(
+            "SELECT last_update_time FROM link WHERE url = (?)",
+            OffsetDateTime.class,
+            url
+        );
+        assertThat(update.atZoneSameInstant(ZoneId.systemDefault()).format(formatter)).isEqualTo(expectedTime);
     }
 
     @Test
@@ -119,13 +127,12 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     public void getData_shouldReturnDataFromDb_whenLinkExists() {
         //Arrange
         String url = "google.com";
-        String name = "title";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         OffsetDateTime time = OffsetDateTime.now();
         String expectedTime = time.format(formatter);
         Long linkId =
             jdbcTemplate.queryForObject("INSERT INTO link (url) VALUES (?) RETURNING link_id", Long.class, url);
-        jdbcTemplate.update("UPDATE link SET last_update_time = (?), name = (?) WHERE url = (?)", time, name, url);
+        jdbcTemplate.update("UPDATE link SET last_update_time = (?) WHERE url = (?)", time, url);
         //Act
         LinkData response = linkRepository.getData(linkId);
         //Assert

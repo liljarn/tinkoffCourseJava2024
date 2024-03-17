@@ -30,7 +30,7 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
         return GITHUB_PATTERN.matcher(url.toString()).matches();
     }
 
-    @Override
+    @SuppressWarnings("checkstyle:MultipleStringLiterals") @Override
     public List<LinkInfo> fetchData(URI url) {
         if (!isValidated(url)) {
             return null;
@@ -52,19 +52,18 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
         return events.stream()
             .map(event -> new LinkInfo(url, getDescription(event.type(), event), event.updateTime()))
             .toList();
-        //return new LinkInfo(url, info.name(), info.update());
     }
 
     private String getDescription(String eventType, GitHubEvent event) {
-        String message = "";
+        String message;
         if (eventType.equals("IssuesEvent")) {
             String title = event.payload().issue().title();
             if (event.payload().action().equals("opened")) {
-                message = "В репозитории был создан новый issue \"" + title + "\" \uD83D\uDC80:";
+                message = "В репозитории был создан новый issue \"" + title + "\" \uD83D\uDC80: ";
             } else if (event.payload().action().equals("closed")) {
-                message = "В репозитории был решён issue \"" + title + "\" \uD83D\uDE0E:";
+                message = "В репозитории был решён issue \"" + title + "\" \uD83D\uDE0E: ";
             } else {
-                message = "В репозитории произошли изменения issue \"" + title + "\":";
+                message = "В репозитории произошли изменения issue \"" + title + "\": ";
             }
         } else {
             String branch = event.payload().ref();

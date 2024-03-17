@@ -16,7 +16,7 @@ public class MessageSender implements Sender {
 
     @Override
     public void sendMessage(SendMessage message) {
-        SendResponse response = bot.execute(message.parseMode(ParseMode.Markdown));
+        SendResponse response = bot.execute(message.parseMode(ParseMode.HTML));
         log.info(response.isOk());
         log.info(response.description());
     }

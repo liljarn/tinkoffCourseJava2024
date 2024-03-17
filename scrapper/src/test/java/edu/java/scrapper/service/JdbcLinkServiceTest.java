@@ -44,7 +44,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatRepository.isInTable(chatId)).thenReturn(true);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
-        Mockito.when(client.fetchData(url)).thenReturn(new LinkInfo(url, "title", OffsetDateTime.now()));
+        Mockito.when(client.fetchData(url)).thenReturn(List.of(new LinkInfo(url, "title", OffsetDateTime.now())));
         LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Act
@@ -113,7 +113,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatRepository.isInTable(chatId)).thenReturn(true);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
-        Mockito.when(client.fetchData(url)).thenReturn(new LinkInfo(url, "title", OffsetDateTime.now()));
+        Mockito.when(client.fetchData(url)).thenReturn(List.of(new LinkInfo(url, "title", OffsetDateTime.now())));
         LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         //Expect
         assertThatThrownBy(() -> service.addLink(
@@ -141,7 +141,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatRepository.isInTable(chatId)).thenReturn(true);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
-        Mockito.when(client.fetchData(url)).thenReturn(new LinkInfo(url, "title", OffsetDateTime.now()));
+        Mockito.when(client.fetchData(url)).thenReturn(List.of(new LinkInfo(url, "title", OffsetDateTime.now())));
         LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Act

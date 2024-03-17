@@ -42,7 +42,7 @@ public class JdbcLinkService implements LinkService {
                 Long linkId = linkRepository.getLinkId(addLinkRequest.link().toString());
                 if (linkId == 0) {
                     client.fetchData(addLinkRequest.link());
-                    LinkResponse response = linkRepository.add(chatId, addLinkRequest);
+                    LinkResponse response = linkRepository.add(addLinkRequest);
                     chatLinkRepository.add(chatId, response.id());
                     return response;
                 }
@@ -61,7 +61,7 @@ public class JdbcLinkService implements LinkService {
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
         LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
         if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
-            return linkRepository.remove(chatId, removeLinkRequest);
+            return linkRepository.remove(removeLinkRequest);
         }
         return response;
     }

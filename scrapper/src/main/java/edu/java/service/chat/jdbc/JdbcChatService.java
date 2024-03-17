@@ -1,6 +1,5 @@
 package edu.java.service.chat.jdbc;
 
-import edu.java.exceptions.ChatAlreadyRegisteredException;
 import edu.java.exceptions.ChatNotFoundException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.service.chat.ChatService;
@@ -16,9 +15,9 @@ public class JdbcChatService implements ChatService {
     @Override
     @Transactional
     public void registerChat(Long chatId) {
-        if (chatRepository.isInTable(chatId)) {
-            throw new ChatAlreadyRegisteredException();
-        }
+//        if (chatRepository.isInTable(chatId)) {
+//            throw new ChatAlreadyRegisteredException();
+//        }
         chatRepository.add(chatId);
     }
 

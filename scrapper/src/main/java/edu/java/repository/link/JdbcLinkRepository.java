@@ -13,9 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
 @RequiredArgsConstructor
 @Log4j2
 public class JdbcLinkRepository implements LinkRepository {
@@ -29,7 +27,7 @@ public class JdbcLinkRepository implements LinkRepository {
         List<LinkResponse> linksList =
             jdbcTemplate.query(
                 "SELECT link.* FROM link "
-                    + "JOIN chat_link ON link.link_id = chat_link.link_id WHERE chat_link.chat_id = ?",
+                + "JOIN chat_link ON link.link_id = chat_link.link_id WHERE chat_link.chat_id = ?",
                 mapper,
                 chatId
             );
@@ -37,7 +35,7 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public LinkResponse add(Long chatId, AddLinkRequest addLinkRequest) {
+    public LinkResponse add(AddLinkRequest addLinkRequest) {
         Long linkId = jdbcTemplate.queryForObject(
             "INSERT INTO link (url) VALUES (?) RETURNING link_id",
             Long.class,
@@ -47,23 +45,22 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public LinkResponse remove(Long chatId, RemoveLinkRequest removeLinkRequest) {
+    public LinkResponse remove(RemoveLinkRequest removeLinkRequest) {
         long id = removeLinkRequest.id();
-        LinkResponse linkResponse = jdbcTemplate.queryForObject("SELECT * FROM link WHERE link_id = (?)", mapper, id);
-        jdbcTemplate.update("DELETE FROM link WHERE link_id = (?)", id);
-        return linkResponse;
+        URI url = jdbcTemplate.queryForObject("DELETE FROM link WHERE link_id = (?) RETURNING url", URI.class, id);
+        return new LinkResponse(id, url);
     }
 
     @Override
     public void updateLink(URI url, OffsetDateTime checkTime, OffsetDateTime lastUpdateTime) {
         jdbcTemplate.update("UPDATE link SET last_update_time = (?), checked_at = (?)"
-            + " WHERE url = (?)", lastUpdateTime, checkTime, url.toString());
+                            + " WHERE url = (?)", lastUpdateTime, checkTime, url.toString());
     }
 
     @Override
     public LinkData getData(Long linkId) {
         return jdbcTemplate.queryForObject("SELECT last_update_time, url FROM link"
-            + " WHERE link_id = (?)", dataMapper, linkId);
+                                           + " WHERE link_id = (?)", dataMapper, linkId);
     }
 
     @Override

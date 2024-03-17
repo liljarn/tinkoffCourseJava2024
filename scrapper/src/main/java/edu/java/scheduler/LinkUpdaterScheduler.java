@@ -22,51 +22,51 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class LinkUpdaterScheduler {
-    @Value("${spring.database.check-time-minutes}")
-    private int minutesCheckTime;
-    private final List<ClientInfoProvider> clientInfoProviders;
-    private final BotClient botClient;
-    private final LinkRepository linkRepository;
-    private final ChatLinkRepository chatLinkRepository;
+   @Value("${spring.database.check-time-minutes}")
+   private int minutesCheckTime;
+   private final List<ClientInfoProvider> clientInfoProviders;
+   private final BotClient botClient;
+   private final LinkRepository linkRepository;
+   private final ChatLinkRepository chatLinkRepository;
 
-    @Scheduled(fixedDelayString = "#{@'app-edu.java.configuration.ApplicationConfig'.scheduler.interval}")
-    @Transactional
-    public void update() {
-        OffsetDateTime time = OffsetDateTime.now();
-        time = time.minusMinutes(minutesCheckTime);
-        List<ChatLinkResponse> linksToChats = chatLinkRepository.findAllFiltered(time);
-        log.info(linksToChats);
-        for (ChatLinkResponse linkToChats : linksToChats) {
-            Long linkId = linkToChats.linkId();
-            LinkData data = linkRepository.getData(linkId);
-            for (ClientInfoProvider client : clientInfoProviders) {
-                if (client.isValidated(data.url())) {
-                    List<LinkInfo> listLinkInfo = client.fetchData(data.url())
-                        .stream()
-                        .filter(linkInfo -> linkInfo.lastActivityDate().isAfter(data.updateTime()))
-                        .sorted(Comparator.comparing(LinkInfo::lastActivityDate))
-                        .toList();
-                    log.info(listLinkInfo);
-                    for (LinkInfo info : listLinkInfo) {
-                        LinkUpdate update = new LinkUpdate(
-                            linkId,
-                            data.url(),
-                            info.title(),
-                            linkToChats.tgChatIds().stream().toList()
-                        );
-                        botClient.sendUpdate(update);
-                    }
-                    if (!listLinkInfo.isEmpty()) {
-                        OffsetDateTime curTime = OffsetDateTime.now();
-                        linkRepository.updateLink(
-                            data.url(),
-                            curTime,
-                            listLinkInfo.get(listLinkInfo.size() - 1).lastActivityDate()
-                        );
-                    }
-                }
-            }
-        }
-    }
+   @Scheduled(fixedDelayString = "#{@'app-edu.java.configuration.ApplicationConfig'.scheduler.interval}")
+   @Transactional
+   public void update() {
+       OffsetDateTime time = OffsetDateTime.now();
+       time = time.minusMinutes(minutesCheckTime);
+       List<ChatLinkResponse> linksToChats = chatLinkRepository.findAllFiltered(time);
+       log.info(linksToChats);
+       for (ChatLinkResponse linkToChats : linksToChats) {
+           Long linkId = linkToChats.linkId();
+           LinkData data = linkRepository.getData(linkId);
+           for (ClientInfoProvider client : clientInfoProviders) {
+               if (client.isValidated(data.url())) {
+                   List<LinkInfo> listLinkInfo = client.fetchData(data.url())
+                       .stream()
+                       .filter(linkInfo -> linkInfo.lastActivityDate().isAfter(data.updateTime()))
+                       .sorted(Comparator.comparing(LinkInfo::lastActivityDate))
+                       .toList();
+                   log.info(listLinkInfo);
+                   for (LinkInfo info : listLinkInfo) {
+                       LinkUpdate update = new LinkUpdate(
+                           linkId,
+                           data.url(),
+                           info.title(),
+                           linkToChats.tgChatIds().stream().toList()
+                       );
+                       botClient.sendUpdate(update);
+                   }
+                   if (!listLinkInfo.isEmpty()) {
+                       OffsetDateTime curTime = OffsetDateTime.now();
+                       linkRepository.updateLink(
+                           data.url(),
+                           curTime,
+                           listLinkInfo.get(listLinkInfo.size() - 1).lastActivityDate()
+                       );
+                   }
+               }
+           }
+       }
+   }
 }
 

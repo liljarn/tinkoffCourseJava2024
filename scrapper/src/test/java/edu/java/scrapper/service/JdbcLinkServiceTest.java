@@ -37,7 +37,7 @@ public class JdbcLinkServiceTest {
             new AddLinkRequest(url);
         LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
         Mockito.when(linkRepository.getLinkId(url.toString())).thenReturn(0L);
-        Mockito.when(linkRepository.add(chatId, addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(linkRepository.add(addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.doNothing().when(chatLinkRepository).add(chatId, linkId);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
@@ -64,7 +64,7 @@ public class JdbcLinkServiceTest {
             new AddLinkRequest(url);
         LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
         Mockito.when(linkRepository.getLinkId(url.toString())).thenReturn(0L);
-        Mockito.when(linkRepository.add(chatId, addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(linkRepository.add(addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.doNothing().when(chatLinkRepository).add(chatId, linkId);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
@@ -105,7 +105,7 @@ public class JdbcLinkServiceTest {
             new AddLinkRequest(url);
         LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
         Mockito.when(linkRepository.getLinkId(url.toString())).thenReturn(chatId);
-        Mockito.when(linkRepository.add(chatId, addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(linkRepository.add(addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.doNothing().when(chatLinkRepository).add(chatId, linkId);
         Mockito.when(chatLinkRepository.isTracked(chatId, linkId)).thenReturn(true);
@@ -132,7 +132,7 @@ public class JdbcLinkServiceTest {
             new AddLinkRequest(url);
         LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
         Mockito.when(linkRepository.getLinkId(url.toString())).thenReturn(chatId);
-        Mockito.when(linkRepository.add(chatId, addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(linkRepository.add(addLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         Mockito.when(linkRepository.getData(linkId)).thenReturn(new LinkData(OffsetDateTime.now(), url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.doNothing().when(chatLinkRepository).add(chatId, linkId);
@@ -179,7 +179,7 @@ public class JdbcLinkServiceTest {
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
-        Mockito.when(linkRepository.remove(chatId, removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(linkRepository.remove(removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.when(chatLinkRepository.remove(chatId, linkId)).thenReturn(new LinkResponse(linkId, url));
         Mockito.when(chatLinkRepository.hasChats(linkId)).thenReturn(false);
@@ -191,7 +191,7 @@ public class JdbcLinkServiceTest {
         LinkResponse response = service.deleteLink(chatId, removeLinkRequest);
         //Assert
         assertThat(response).isEqualTo(expected);
-        Mockito.verify(linkRepository, Mockito.times(1)).remove(chatId, removeLinkRequest);
+        Mockito.verify(linkRepository, Mockito.times(1)).remove(removeLinkRequest);
     }
 
     @Test
@@ -202,7 +202,7 @@ public class JdbcLinkServiceTest {
         URI url = URI.create("google.com");
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
-        Mockito.when(linkRepository.remove(chatId, removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(linkRepository.remove(removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.when(chatLinkRepository.remove(chatId, linkId)).thenReturn(new LinkResponse(linkId, url));
         Mockito.when(chatLinkRepository.hasChats(linkId)).thenReturn(true);
@@ -214,6 +214,6 @@ public class JdbcLinkServiceTest {
         LinkResponse response = service.deleteLink(chatId, removeLinkRequest);
         //Assert
         assertThat(response).isEqualTo(expected);
-        Mockito.verify(linkRepository, Mockito.times(0)).remove(chatId, removeLinkRequest);
+        Mockito.verify(linkRepository, Mockito.times(0)).remove(removeLinkRequest);
     }
 }

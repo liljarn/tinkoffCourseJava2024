@@ -7,11 +7,13 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 
+@Log4j2
 public class GitHubInfoProvider extends WebClientInfoProvider {
-    private static final String BASE_API_URL = "https://api.github.com/repos/";
-    private static final String EVENTS_ENDPOINT = "/events";
+    private static final String BASE_API_URL = "https://api.github.com/repos";
+    private static final String EVENTS_ENDPOINT = "/events?per_page=10";
     private static final Pattern GITHUB_PATTERN = Pattern.compile("https://github.com/(.+)/(.+)");
 
     @Value("${client.github.token}")
@@ -41,7 +43,6 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
             .header("Authorization", "Bearer " + token)
             .retrieve()
             .bodyToMono(GitHubEvent[].class)
-            .onErrorReturn(new GitHubEvent[0])
             .block();
         if (info == null || info.length == 0) {
             throw new LinkNotSupportedException(url);

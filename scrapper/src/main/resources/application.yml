@@ -3,6 +3,7 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 5s
+  database-access-type: jooq
 
 spring:
   application:
@@ -11,11 +12,14 @@ spring:
     enabled: false
   database:
     check-time-minutes: 0
+    limit: 10
   datasource:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+  jooq:
+    sql-dialect: postgres
 
 server:
   port: 8080

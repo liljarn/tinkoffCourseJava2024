@@ -11,9 +11,9 @@ import java.time.OffsetDateTime;
 public interface LinkRepository {
     ListLinksResponse findAll(Long chatId);
 
-    LinkResponse add(Long chatId, AddLinkRequest addLinkRequest);
+    LinkResponse add(AddLinkRequest addLinkRequest);
 
-    LinkResponse remove(Long chatId, RemoveLinkRequest removeLinkRequest);
+    LinkResponse remove(RemoveLinkRequest removeLinkRequest);
 
     LinkData getData(Long linkId);
 

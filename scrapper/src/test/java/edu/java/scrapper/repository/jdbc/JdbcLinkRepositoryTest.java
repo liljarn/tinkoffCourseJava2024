@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
 import edu.java.dto.LinkData;
 import edu.java.dto.request.AddLinkRequest;
@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,6 +31,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private LinkRepository linkRepository;
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jdbc");
+    }
 
     @Test
     @Transactional
@@ -67,11 +74,10 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Rollback
     public void add_shouldCorrectlyAddLinkInLinkTable_thenReturnLinkResponse() {
         //Arrange
-        Long chatId = 1L;
         String url = "google.com";
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(url));
         //Act
-        LinkResponse response = linkRepository.add(chatId, addLinkRequest);
+        LinkResponse response = linkRepository.add(addLinkRequest);
         //Assert
         Long count =
             jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE url = ?", Long.class, url);
@@ -83,14 +89,13 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Rollback
     public void remove_shouldCorrectlyRemoveLinkFromLinkTable_thenReturnLinkResponse() {
         //Arrange
-        Long chatId = 1L;
         String url = "google.com";
         Long linkId =
             jdbcTemplate.queryForObject("INSERT INTO link (url) VALUES (?) RETURNING link_id", Long.class, url);
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
         LinkResponse expectedResponse = new LinkResponse(linkId, URI.create(url));
         //Act
-        LinkResponse response = linkRepository.remove(chatId, removeLinkRequest);
+        LinkResponse response = linkRepository.remove(removeLinkRequest);
         //Assert
         Long count =
             jdbcTemplate.queryForObject("SELECT COUNT(link_id) FROM link WHERE link_id = ?", Long.class, linkId);

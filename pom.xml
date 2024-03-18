@@ -234,7 +234,7 @@
                     <version>${jacoco-maven-plugin.version}</version>
                     <configuration>
                         <excludes>
-                            <exclude>**/domain/jooq/**</exclude>
+                            <exclude>**/repository/jooq/**</exclude>
                         </excludes>
                     </configuration>
                     <executions>
@@ -299,7 +299,7 @@
                         <consoleOutput>true</consoleOutput>
                         <logViolationsToConsole>true</logViolationsToConsole>
                         <failsOnError>true</failsOnError>
-                        <excludes>**/domain/jooq/**</excludes>
+                        <excludes>**/repository/jooq/**</excludes>
                     </configuration>
                 </plugin>
             </plugins>

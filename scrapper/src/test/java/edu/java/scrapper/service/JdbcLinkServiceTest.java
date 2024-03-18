@@ -17,7 +17,7 @@ import edu.java.repository.chat_link.JdbcChatLinkRepository;
 import edu.java.repository.link.JdbcLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import edu.java.service.link.LinkService;
-import edu.java.service.link.jdbc.JdbcLinkService;
+import edu.java.service.link.JdbcLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;

@@ -143,4 +143,33 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         //Assert
         assertThat(response).extracting(update -> update.updateTime().format(formatter)).isEqualTo(expectedTime);
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void getLinkId_shouldReturnLinkIdByURL_whenLinkIsInTable() {
+        //Arrange
+        String url = "google.com";
+        Long linkId =
+            jdbcTemplate.queryForObject("INSERT INTO link (url) VALUES (?) RETURNING link_id", Long.class, url);
+        //Act
+        Long response = linkRepository.getLinkId(url);
+        //Assert
+        assertThat(response).isEqualTo(linkId);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void getLinkId_shouldReturnZero_whenLinkIsNotInTable() {
+        //Arrange
+        String url = "google.com";
+        String notInTableUrl = "youtube.com";
+        Long linkId =
+            jdbcTemplate.queryForObject("INSERT INTO link (url) VALUES (?) RETURNING link_id", Long.class, url);
+        //Act
+        Long response = linkRepository.getLinkId(notInTableUrl);
+        //Assert
+        assertThat(response).isEqualTo(0L);
+    }
 }

@@ -40,6 +40,9 @@ public class GitHubInfoProviderTest {
                         "payload": {
                           "ref": "refs/heads/master"
                         },
+                        "actor": {
+                          "login": "liljarn"
+                        },
                         "created_at": "2024-03-16T19:22:17Z"
                       }
                     ]""")));
@@ -55,12 +58,44 @@ public class GitHubInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
         URI url = URI.create(LINK);
-        String title = "В ветку \"/master\" репозитория были запушены новые коммиты: ";
+        String title =
+            "Пользователь <b>liljarn</b> запушил в репозиторий новые коммиты в ветку \"/master\" \uD83E\uDD70: ";
         //Act
         List<LinkInfo> info = client.fetchData(url);
         //Assert
         assertThat(info.get(0)).extracting(LinkInfo::url, LinkInfo::title)
             .contains(url, title);
+    }
+
+    @Test
+    @DisplayName("Not updated GitHub repository link test")
+    public void fetchData_shouldEmptyList_whenRepositoryWasNotUpdated() {
+        //Arrange
+        String oldApiLinkEvents = "/repos/liljarn/tinkoff/events";
+        String oldApiLink = "/repos/liljarn/tinkoff";
+        String oldLink = "https://github.com/repos/liljarn/tinkoff";
+        server.stubFor(get(urlPathMatching(oldApiLinkEvents))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""
+                    [
+
+                    ]""")));
+        server.stubFor(get(urlPathMatching(oldApiLink))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""
+                    {
+                        "text": "test"
+                    }""")));
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        URI url = URI.create(oldLink);
+        //Act
+        List<LinkInfo> info = client.fetchData(url);
+        //Assert
+        assertThat(info).isEmpty();
     }
 
     @Test

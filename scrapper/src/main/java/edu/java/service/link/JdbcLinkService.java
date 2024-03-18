@@ -1,4 +1,4 @@
-package edu.java.service.link.jdbc;
+package edu.java.service.link;
 
 import edu.java.client.ClientInfoProvider;
 import edu.java.dto.request.AddLinkRequest;
@@ -11,7 +11,6 @@ import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
-import edu.java.service.link.LinkService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

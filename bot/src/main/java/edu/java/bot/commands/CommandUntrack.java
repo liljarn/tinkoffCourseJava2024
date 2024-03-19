@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.dto.client.LinkResponse;
 import edu.java.bot.dto.client.RemoveLinkRequest;
+import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.keyboard.InlineKeyboardBuilder;
 import edu.java.bot.service.command.CommandService;
 import java.util.List;
@@ -56,7 +57,11 @@ public class CommandUntrack implements Command {
         long chatId = update.callbackQuery().from().id();
         long linkId = Long.parseLong(update.callbackQuery().data());
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
-        service.removeLink(chatId, removeLinkRequest);
+        try {
+            service.removeLink(chatId, removeLinkRequest);
+        } catch (ScrapperException e) {
+            return new SendMessage(chatId, e.getMessage());
+        }
         return new SendMessage(chatId, SUCCESSFUL_DELETE);
     }
 }

@@ -7,6 +7,7 @@ import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.exceptions.ChatNotAuthorizedException;
 import edu.java.exceptions.LinkAlreadyTrackedException;
+import edu.java.exceptions.LinkNotFoundException;
 import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat_link.ChatLinkRepository;
@@ -58,10 +59,13 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
-        LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
-        if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
-            return linkRepository.remove(removeLinkRequest);
+        if (chatLinkRepository.isTracked(chatId, removeLinkRequest.id())) {
+            LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
+            if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
+                return linkRepository.remove(removeLinkRequest);
+            }
+            return response;
         }
-        return response;
+        throw new LinkNotFoundException();
     }
 }

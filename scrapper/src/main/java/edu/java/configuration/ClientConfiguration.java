@@ -1,7 +1,9 @@
 package edu.java.configuration;
 
 import edu.java.client.github.GitHubInfoProvider;
+import edu.java.client.github.events.EventProvider;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,6 @@ public class ClientConfiguration {
     @Value("${client.stackoverflow.base-url}")
     private String stackoverflowBaseUrl;
 
-
     @Bean
     public WebClient webClient() {
         return (botBaseUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8090").build()
@@ -24,11 +25,11 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public GitHubInfoProvider gitHubInfoProvider() {
+    public GitHubInfoProvider gitHubInfoProvider(List<EventProvider> eventProviderList) {
         if (githubBaseUrl == null || githubBaseUrl.isEmpty()) {
-            return new GitHubInfoProvider();
+            return new GitHubInfoProvider(eventProviderList);
         }
-        return new GitHubInfoProvider(githubBaseUrl);
+        return new GitHubInfoProvider(githubBaseUrl, eventProviderList);
     }
 
     @Bean

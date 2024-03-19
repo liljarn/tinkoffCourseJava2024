@@ -2,6 +2,8 @@ package edu.java.client.github;
 
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
+import edu.java.client.github.events.EventProvider;
+import edu.java.client.github.events.GitHubEvent;
 import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.Arrays;
@@ -17,15 +19,18 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
     private static final String EVENTS_ENDPOINT = "/events?per_page=10";
     private static final Pattern GITHUB_PATTERN = Pattern.compile("https://github.com/(.+)/(.+)");
 
+    private final List<EventProvider> eventProviders;
+
     @Value("${client.github.token}")
     private String token;
 
-    public GitHubInfoProvider(String apiUrl) {
+    public GitHubInfoProvider(String apiUrl, List<EventProvider> eventProviders) {
         super(apiUrl);
+        this.eventProviders = eventProviders;
     }
 
-    public GitHubInfoProvider() {
-        this(BASE_API_URL);
+    public GitHubInfoProvider(List<EventProvider> eventProviders) {
+        this(BASE_API_URL, eventProviders);
     }
 
     @Override
@@ -60,11 +65,11 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
             }
             return Collections.emptyList();
         }
-        return Arrays.stream(info).toList()
-            .stream()
-            .filter(event -> Arrays.stream(EventType.values())
-                .anyMatch(eventType -> eventType.getType().equals(event.type())))
-            .map(event -> new LinkInfo(url, EventType.getTypeMessage(event), event.updateTime()))
+        return Arrays.stream(info)
+            .flatMap(event -> eventProviders.stream()
+                .filter(provider -> provider.checkType(event.type()))
+                .map(provider -> new LinkInfo(url, provider.getMessage(event), event.updateTime()))
+            )
             .toList();
     }
 }

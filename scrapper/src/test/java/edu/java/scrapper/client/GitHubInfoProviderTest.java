@@ -4,9 +4,11 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.github.GitHubInfoProvider;
+import edu.java.client.github.events.EventProvider;
+import edu.java.client.github.events.PushEventProvider;
+import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.List;
-import edu.java.exceptions.LinkNotSupportedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +24,7 @@ public class GitHubInfoProviderTest {
     private static final String API_LINK = "/repos/liljarn/tinkoffCourseJava2023/events";
     private static final String LINK = "https://github.com/repos/liljarn/tinkoffCourseJava2023";
     private static final String NOT_GITHUB_LINK = "https://youtube.com";
-
+    private final List<EventProvider> providers = List.of(new PushEventProvider());
     private WireMockServer server;
 
     //Arrange
@@ -56,7 +58,7 @@ public class GitHubInfoProviderTest {
     @DisplayName("Existing GitHub repository link test")
     public void fetchData_shouldReturnCorrectData_whenRepositoryExists() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
         URI url = URI.create(LINK);
         String title =
             "Пользователь <b>liljarn</b> запушил в репозиторий новые коммиты в ветку \"/master\" \uD83E\uDD70: ";
@@ -90,7 +92,7 @@ public class GitHubInfoProviderTest {
                     {
                         "text": "test"
                     }""")));
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
         URI url = URI.create(oldLink);
         //Act
         List<LinkInfo> info = client.fetchData(url);
@@ -102,7 +104,7 @@ public class GitHubInfoProviderTest {
     @DisplayName("Nonexistent GitHub repository link test")
     public void fetchData_shouldThrowLinkNotSupportedException_whenRepositoryDoesNotExist() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
         URI url = URI.create("https://github.com/repos/aboba/abobus");
         //Expect
         assertThatThrownBy(() -> client.fetchData(url))
@@ -113,7 +115,7 @@ public class GitHubInfoProviderTest {
     @DisplayName("Not GitHub link test")
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
         //Act
         List<LinkInfo> info = client.fetchData(URI.create(NOT_GITHUB_LINK));
         //Assert
@@ -124,7 +126,7 @@ public class GitHubInfoProviderTest {
     @DisplayName("GitHub repository link test")
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
         //Act
         boolean response = client.isValidated(URI.create(LINK));
         //Assert
@@ -135,7 +137,7 @@ public class GitHubInfoProviderTest {
     @DisplayName("Not GitHub repository link test")
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
         //Act
         boolean response = client.isValidated(URI.create(NOT_GITHUB_LINK));
         //Assert

@@ -9,6 +9,7 @@ import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.exceptions.ChatNotAuthorizedException;
 import edu.java.exceptions.LinkAlreadyTrackedException;
+import edu.java.exceptions.LinkNotFoundException;
 import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat.JdbcChatRepository;
@@ -172,7 +173,7 @@ public class JdbcLinkServiceTest {
     }
 
     @Test
-    public void deleteLink_shouldReturnLinkResponseAndRemoveLinkFromLinkTable_whenNobodyTracksIt() {
+    public void deleteLink_shouldReturnLinkResponseAndRemoveLinkFromLinkTable_whenOnlyOneUserTracksIt() {
         //Arrange
         long chatId = 1L;
         long linkId = 1L;
@@ -182,6 +183,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(linkRepository.remove(removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.when(chatLinkRepository.remove(chatId, linkId)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(chatLinkRepository.isTracked(chatId, linkId)).thenReturn(true);
         Mockito.when(chatLinkRepository.hasChats(linkId)).thenReturn(false);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
@@ -205,6 +207,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(linkRepository.remove(removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
         ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
         Mockito.when(chatLinkRepository.remove(chatId, linkId)).thenReturn(new LinkResponse(linkId, url));
+        Mockito.when(chatLinkRepository.isTracked(chatId, linkId)).thenReturn(true);
         Mockito.when(chatLinkRepository.hasChats(linkId)).thenReturn(true);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
@@ -215,5 +218,27 @@ public class JdbcLinkServiceTest {
         //Assert
         assertThat(response).isEqualTo(expected);
         Mockito.verify(linkRepository, Mockito.times(0)).remove(removeLinkRequest);
+    }
+
+    @Test
+    public void deleteLink_shouldThrowLinkNotFoundException_whenNobodyTracksIt() {
+        //Arrange
+        long chatId = 1L;
+        long linkId = 1L;
+        URI url = URI.create("google.com");
+        RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(linkId);
+        LinkRepository linkRepository = Mockito.mock(JdbcLinkRepository.class);
+        Mockito.when(linkRepository.remove(removeLinkRequest)).thenReturn(new LinkResponse(linkId, url));
+        ChatLinkRepository chatLinkRepository = Mockito.mock(JdbcChatLinkRepository.class);
+        Mockito.when(chatLinkRepository.isTracked(chatId, linkId)).thenReturn(false);
+        ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
+        ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
+        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkResponse expected = new LinkResponse(linkId, url);
+        //Expected
+        assertThatThrownBy(()->service.deleteLink(chatId, removeLinkRequest)).isInstanceOf(LinkNotFoundException.class);
+        //Assert
+        Mockito.verify(linkRepository, Mockito.times(0)).remove(removeLinkRequest);
+        Mockito.verify(chatLinkRepository, Mockito.times(0)).remove(chatId, removeLinkRequest.id());
     }
 }

@@ -5,12 +5,12 @@ import edu.java.exceptions.ChatNotFoundException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat.JdbcChatRepository;
 import edu.java.service.chat.ChatService;
-import edu.java.service.chat.JdbcChatService;
+import edu.java.service.chat.DefaultChatService;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class JdbcChatServiceTest {
+public class DefaultChatServiceTest {
     @Test
     public void registerChat_shouldCallChatRepositoryAddMethod_whenChatNotInTable() {
         //Arrange
@@ -18,7 +18,7 @@ public class JdbcChatServiceTest {
         ChatRepository repository = Mockito.mock(JdbcChatRepository.class);
         Mockito.when(repository.isInTable(chatId)).thenReturn(false);
         Mockito.doNothing().when(repository).add(chatId);
-        ChatService service = new JdbcChatService(repository);
+        ChatService service = new DefaultChatService(repository);
         //Act
         service.registerChat(chatId);
         //Assert
@@ -32,7 +32,7 @@ public class JdbcChatServiceTest {
         ChatRepository repository = Mockito.mock(JdbcChatRepository.class);
         Mockito.when(repository.isInTable(chatId)).thenReturn(true);
         Mockito.doNothing().when(repository).add(chatId);
-        ChatService service = new JdbcChatService(repository);
+        ChatService service = new DefaultChatService(repository);
         //Act Expect
         assertThatThrownBy(() -> service.registerChat(chatId)).isInstanceOf(ChatAlreadyRegisteredException.class);
         //Assert
@@ -46,7 +46,7 @@ public class JdbcChatServiceTest {
         ChatRepository repository = Mockito.mock(JdbcChatRepository.class);
         Mockito.when(repository.isInTable(chatId)).thenReturn(true);
         Mockito.doNothing().when(repository).remove(chatId);
-        ChatService service = new JdbcChatService(repository);
+        ChatService service = new DefaultChatService(repository);
         //Act
         service.deleteChat(chatId);
         //Assert
@@ -60,7 +60,7 @@ public class JdbcChatServiceTest {
         ChatRepository repository = Mockito.mock(JdbcChatRepository.class);
         Mockito.when(repository.isInTable(chatId)).thenReturn(false);
         Mockito.doNothing().when(repository).remove(chatId);
-        ChatService service = new JdbcChatService(repository);
+        ChatService service = new DefaultChatService(repository);
         //Act Expect
         assertThatThrownBy(() -> service.deleteChat(chatId)).isInstanceOf(ChatNotFoundException.class);
         //Assert

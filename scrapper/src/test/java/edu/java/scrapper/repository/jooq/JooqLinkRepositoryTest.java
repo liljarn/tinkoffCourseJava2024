@@ -5,6 +5,7 @@ import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
+import edu.java.repository.link.JooqLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import lombok.SneakyThrows;
@@ -28,12 +29,7 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private LinkRepository linkRepository;
-
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
+    private JooqLinkRepository linkRepository;
 
     @Test
     @Transactional

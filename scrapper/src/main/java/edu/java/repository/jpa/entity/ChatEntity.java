@@ -5,8 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,5 +27,18 @@ public class ChatEntity {
     private Long chatId;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private Set<LinkEntity> links;
+    @JoinTable(
+        name = "chat_link",
+        joinColumns = @JoinColumn(name = "chat_id"),
+        inverseJoinColumns = @JoinColumn(name = "link_id"))
+    private Set<LinkEntity> links = new HashSet<>();
+
+    public ChatEntity(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    public void addLink(LinkEntity linkEntity) {
+        links.add(linkEntity);
+        linkEntity.getChats().add(this);
+    }
 }

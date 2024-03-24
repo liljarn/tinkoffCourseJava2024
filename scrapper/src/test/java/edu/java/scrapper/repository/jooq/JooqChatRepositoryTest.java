@@ -1,6 +1,7 @@
 package edu.java.scrapper.repository.jooq;
 
 import edu.java.repository.chat.ChatRepository;
+import edu.java.repository.chat.JooqChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class JooqChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
-    private ChatRepository chatRepository;
+    private JooqChatRepository chatRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
 
     @Test
     @Transactional

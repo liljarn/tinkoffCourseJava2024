@@ -2,31 +2,30 @@ package edu.java.service.chat;
 
 import edu.java.exceptions.ChatAlreadyRegisteredException;
 import edu.java.exceptions.ChatNotFoundException;
-import edu.java.repository.chat.ChatRepository;
+import edu.java.repository.jpa.chat.JpaChatRepository;
+import edu.java.repository.jpa.entity.ChatEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @RequiredArgsConstructor
-public class JdbcChatService implements ChatService {
-    private final ChatRepository chatRepository;
+public class JpaChatService implements ChatService {
+    private final JpaChatRepository chatRepository;
 
     @Override
     @Transactional
     public void registerChat(Long chatId) {
-        if (chatRepository.isInTable(chatId)) {
+        if (chatRepository.existsById(chatId)) {
             throw new ChatAlreadyRegisteredException();
         }
-        chatRepository.add(chatId);
+        chatRepository.save(new ChatEntity(chatId));
     }
 
     @Override
     @Transactional
     public void deleteChat(Long chatId) {
-        if (!chatRepository.isInTable(chatId)) {
+        if (!chatRepository.existsById(chatId)) {
             throw new ChatNotFoundException(chatId);
         }
-        chatRepository.remove(chatId);
+        chatRepository.delete(new ChatEntity(chatId));
     }
 }

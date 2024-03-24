@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository.jdbc;
 
 import edu.java.dto.ChatLinkResponse;
-import edu.java.repository.chat_link.ChatLinkRepository;
+import edu.java.repository.chat_link.JdbcChatLinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -21,12 +21,7 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private ChatLinkRepository repository;
-
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jdbc");
-    }
+    private JdbcChatLinkRepository repository;
 
     @Transactional
     @Rollback

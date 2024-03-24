@@ -6,8 +6,7 @@ import edu.java.client.dto.LinkInfo;
 import edu.java.dto.ChatLinkResponse;
 import edu.java.dto.LinkData;
 import edu.java.dto.client.LinkUpdate;
-import edu.java.repository.chat_link.ChatLinkRepository;
-import edu.java.repository.link.LinkRepository;
+import edu.java.service.link.LinkService;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -26,19 +25,18 @@ public class LinkUpdaterScheduler {
    private int minutesCheckTime;
    private final List<ClientInfoProvider> clientInfoProviders;
    private final BotClient botClient;
-   private final LinkRepository linkRepository;
-   private final ChatLinkRepository chatLinkRepository;
+   private final LinkService linkService;
 
    @Scheduled(fixedDelayString = "#{@'app-edu.java.configuration.ApplicationConfig'.scheduler.interval}")
    @Transactional
    public void update() {
        OffsetDateTime time = OffsetDateTime.now();
        time = time.minusMinutes(minutesCheckTime);
-       List<ChatLinkResponse> linksToChats = chatLinkRepository.findAllFiltered(time);
+       List<ChatLinkResponse> linksToChats = linkService.findAll(time);
        log.info(linksToChats);
        for (ChatLinkResponse linkToChats : linksToChats) {
            Long linkId = linkToChats.linkId();
-           LinkData data = linkRepository.getData(linkId);
+           LinkData data = linkService.getData(linkId);
            for (ClientInfoProvider client : clientInfoProviders) {
                if (client.isValidated(data.url())) {
                    List<LinkInfo> listLinkInfo = client.fetchData(data.url())
@@ -58,7 +56,7 @@ public class LinkUpdaterScheduler {
                    }
                    if (!listLinkInfo.isEmpty()) {
                        OffsetDateTime curTime = OffsetDateTime.now();
-                       linkRepository.updateLink(
+                       linkService.updateLink(
                            data.url(),
                            curTime,
                            listLinkInfo.get(listLinkInfo.size() - 1).lastActivityDate()

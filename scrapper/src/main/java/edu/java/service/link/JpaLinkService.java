@@ -8,7 +8,6 @@ import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.exceptions.ChatNotAuthorizedException;
-import edu.java.exceptions.ChatNotFoundException;
 import edu.java.exceptions.LinkAlreadyTrackedException;
 import edu.java.exceptions.LinkNotFoundException;
 import edu.java.exceptions.LinkNotSupportedException;
@@ -36,7 +35,7 @@ public class JpaLinkService implements LinkService {
     public ListLinksResponse getAllLinks(Long chatId) {
         List<LinkResponse> linkResponses = chatRepository
             .findById(chatId)
-            .orElseThrow(() -> new ChatNotFoundException(chatId))
+            .orElseThrow(ChatNotAuthorizedException::new)
             .getLinks()
             .stream()
             .map(linkEntity -> new LinkResponse(linkEntity.getLinkId(), URI.create(linkEntity.getUrl())))
@@ -88,7 +87,7 @@ public class JpaLinkService implements LinkService {
 
     @Override
     @Transactional
-    public List<ChatLinkResponse> findAll(OffsetDateTime time) {
+    public List<ChatLinkResponse> findAllChatsByLinksFiltered(OffsetDateTime time) {
         Set<LinkEntity> links = linkRepository.findAllByCheckedAtBefore(time);
         return links.stream()
             .map(linkEntity -> new ChatLinkResponse(

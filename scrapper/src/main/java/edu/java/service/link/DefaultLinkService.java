@@ -73,7 +73,7 @@ public class DefaultLinkService implements LinkService {
 
     @Override
     @Transactional
-    public List<ChatLinkResponse> findAll(OffsetDateTime time) {
+    public List<ChatLinkResponse> findAllChatsByLinksFiltered(OffsetDateTime time) {
         return chatLinkRepository.findAllFiltered(time);
     }
 

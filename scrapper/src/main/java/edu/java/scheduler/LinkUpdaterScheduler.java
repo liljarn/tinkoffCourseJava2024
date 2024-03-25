@@ -32,7 +32,7 @@ public class LinkUpdaterScheduler {
    public void update() {
        OffsetDateTime time = OffsetDateTime.now();
        time = time.minusMinutes(minutesCheckTime);
-       List<ChatLinkResponse> linksToChats = linkService.findAll(time);
+       List<ChatLinkResponse> linksToChats = linkService.findAllChatsByLinksFiltered(time);
        log.info(linksToChats);
        for (ChatLinkResponse linkToChats : linksToChats) {
            Long linkId = linkToChats.linkId();

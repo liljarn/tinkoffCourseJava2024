@@ -17,7 +17,7 @@ public interface LinkService {
 
     LinkResponse deleteLink(Long chatId, RemoveLinkRequest addLinkRequest);
 
-    List<ChatLinkResponse> findAll(OffsetDateTime time);
+    List<ChatLinkResponse> findAllChatsByLinksFiltered(OffsetDateTime time);
 
     LinkData getData(Long linkId);
 

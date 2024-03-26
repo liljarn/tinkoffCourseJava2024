@@ -14,9 +14,6 @@ public class MessageConstants {
     public static final String TRACK_DESCRIPTION = "Добавить отслеживаемый ресурс.";
     public static final String UNTRACK_DESCRIPTION = "Удалить отслеживаемый ресурс.";
     public static final String LIST_DESCRIPTION = "Вывести список отслеживаемых ресурсов.";
-    public static final String GITHUB_LINK = "https://github.com/liljarn/tinkoffCourseJava2024";
-    public static final String STACK_LINK =
-        "https://stackoverflow.com/questions/53579112/inject-list-of-all-beans-with-a-certain-interface";
     public static final String SUCCESSFUL_DELETE = "Ссылка успешно удалена.";
     public static final String NOT_COMMAND =
         "Не понимаю :(, напишите команду /help для вывода *списка* доступных команд.";
@@ -37,4 +34,5 @@ public class MessageConstants {
     public static final String UNTRACK_WRONG_TEXT = "Введите *только* команду /untrack.";
     public static final String LIST_WRONG_TEXT = "Введите *только* команду /list.";
     public static final String DASH = " — ";
+    public static final String EMPTY_TRACK_LIST = "Вы не отслеживаете *ни одной* ссылки";
 }

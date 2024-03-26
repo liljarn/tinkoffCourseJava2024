@@ -2,7 +2,7 @@ package edu.java.bot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.bot.dto.request.LinkUpdate;
-import edu.java.bot.service.UpdateService;
+import edu.java.bot.service.update.UpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ public class UpdateControllerTest {
         Mockito.doNothing().when(updateService).updateLink(linkUpdate);
         //Act
         var act = mvc.perform(MockMvcRequestBuilders.post("/updates").contentType("application/json")
-                .content("{}"));
+            .content("{}"));
         //Assert
         act.andExpect(status().isBadRequest());
     }

@@ -1,12 +1,21 @@
 app:
   scheduler:
     enable: true
-    interval: 5s
+    interval: 10s
     force-check-delay: 5s
 
 spring:
   application:
     name: scrapper
+  liquibase:
+    enabled: false
+  database:
+    check-time-minutes: 5
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
 server:
   port: 8080
@@ -20,8 +29,9 @@ springdoc:
 
 client:
   bot:
-    base-url:
+    base-url: http://localhost:8090
   github:
     base-url:
+    token: ${TOKEN:}
   stackoverflow:
     base-url:

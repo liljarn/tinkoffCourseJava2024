@@ -2,7 +2,8 @@ package edu.java.client.stackoverflow;
 
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
-import java.net.URL;
+import edu.java.exceptions.LinkNotSupportedException;
+import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.extern.log4j.Log4j2;
@@ -22,12 +23,12 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
     }
 
     @Override
-    public boolean isValidated(URL url) {
+    public boolean isValidated(URI url) {
         return STACKOVERFLOW_PATTERN.matcher(url.toString()).matches();
     }
 
     @Override
-    public LinkInfo fetchData(URL url) {
+    public LinkInfo fetchData(URI url) {
         Matcher matcher = STACKOVERFLOW_PATTERN.matcher(url.toString());
         if (!matcher.matches()) {
             return null;
@@ -42,7 +43,7 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
             .onErrorReturn(new StackOverflowResponse(null))
             .block();
         if (info == null || info.equals(new StackOverflowResponse(null)) || info.items().length == 0) {
-            return null;
+            throw new LinkNotSupportedException(url);
         }
         return new LinkInfo(url, info.items()[0].title(), info.items()[0].lastActivityDate());
     }

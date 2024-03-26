@@ -3,6 +3,7 @@ package edu.java.bot.exception;
 import edu.java.bot.dto.response.ApiErrorResponse;
 import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -14,6 +15,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
+@Log4j2
 public class BotExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(

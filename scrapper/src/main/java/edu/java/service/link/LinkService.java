@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.service.link;
 
 import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;

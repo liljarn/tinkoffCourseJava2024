@@ -35,7 +35,7 @@ public class ScrapperClientTest {
     public void registerChat_shouldSendRequestToChatController() {
         //Arrange
         server = new WireMockServer(8080);
-        server.stubFor(post(urlPathMatching(CHAT_LINK))
+        server.stubFor(post(urlPathMatching(CHAT_LINK + "/1"))
             .willReturn(aResponse()
                 .withStatus(200)));
         server.start();
@@ -43,16 +43,16 @@ public class ScrapperClientTest {
         //Act
         scrapperClient.registerChat(1L);
         //Assert
-        WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_LINK)));
+        WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_LINK + "/1")));
     }
 
     @Test
     @DisplayName("Scrapper client request to ChatController deleteChat test")
     @SneakyThrows
-    public void delete_chat_shouldSendRequestToChatController() {
+    public void deleteChat_shouldSendRequestToChatController() {
         //Arrange
         server = new WireMockServer(8080);
-        server.stubFor(delete(urlPathMatching(CHAT_LINK))
+        server.stubFor(delete(urlPathMatching(CHAT_LINK + "/1"))
             .willReturn(aResponse()
                 .withStatus(200)));
         server.start();
@@ -60,7 +60,7 @@ public class ScrapperClientTest {
         //Act
         scrapperClient.deleteChat(1L);
         //Assert
-        WireMock.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_LINK)));
+        WireMock.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_LINK + "/1")));
     }
 
     @Test

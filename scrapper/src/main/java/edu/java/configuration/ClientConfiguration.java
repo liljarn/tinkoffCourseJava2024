@@ -9,32 +9,33 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ClientConfiguration {
-    @Value("client.bot.base-url")
-    private String botUrl;
-    @Value("client.github.base-url")
-    private String githubUrl;
-    @Value("client.stackoverflow.base-url")
-    private String stackoverflowUrl;
+    @Value("${client.bot.base-url}")
+    private String botBaseUrl;
+    @Value("${client.github.base-url}")
+    private String githubBaseUrl;
+    @Value("${client.stackoverflow.base-url}")
+    private String stackoverflowBaseUrl;
+
 
     @Bean
     public WebClient webClient() {
-        return (botUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8090").build()
-            : WebClient.builder().baseUrl(botUrl).build();
+        return (botBaseUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8090").build()
+            : WebClient.builder().baseUrl(botBaseUrl).build();
     }
 
     @Bean
     public GitHubInfoProvider gitHubInfoProvider() {
-        if (githubUrl.isEmpty()) {
+        if (githubBaseUrl == null || githubBaseUrl.isEmpty()) {
             return new GitHubInfoProvider();
         }
-        return new GitHubInfoProvider(githubUrl);
+        return new GitHubInfoProvider(githubBaseUrl);
     }
 
     @Bean
     public StackOverflowInfoProvider stackOverflowInfoProvider() {
-        if (stackoverflowUrl.isEmpty()) {
+        if (stackoverflowBaseUrl == null || stackoverflowBaseUrl.isEmpty()) {
             return new StackOverflowInfoProvider();
         }
-        return new StackOverflowInfoProvider(stackoverflowUrl);
+        return new StackOverflowInfoProvider(stackoverflowBaseUrl);
     }
 }

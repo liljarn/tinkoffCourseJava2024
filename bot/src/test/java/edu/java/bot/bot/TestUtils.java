@@ -1,4 +1,4 @@
-package edu.java.bot.hw1;
+package edu.java.bot.bot;
 
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Chat;
@@ -6,11 +6,14 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import lombok.experimental.UtilityClass;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 
 @UtilityClass
 public class TestUtils {
+
+    public static final String GITHUB_LINK = "https://github.com/liljarn/tinkoffCourseJava2024";
     public static final String COMMANDS =
         """
             Список команд:
@@ -43,13 +46,14 @@ public class TestUtils {
         return update;
     }
 
-    public static Update createMockCallbackUpdate(long chatId) {
+    public static Update createMockCallbackUpdate(long chatId, String data) {
         Update update = Mockito.mock(Update.class);
         CallbackQuery callbackQuery = Mockito.mock(CallbackQuery.class);
         User user = Mockito.mock(User.class);
         Mockito.when(user.id()).thenReturn(chatId);
         Mockito.when(callbackQuery.from()).thenReturn(user);
         Mockito.when(update.callbackQuery()).thenReturn(callbackQuery);
+        Mockito.when(callbackQuery.data()).thenReturn(data);
         return update;
     }
 }

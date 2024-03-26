@@ -31,3 +31,4 @@ build/
 ### VS Code ###
 .vscode/
 /bot/src/main/resources/application-dev.yml
+/scrapper/src/main/resources/.env

@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.service.chat;
 
 import org.springframework.stereotype.Service;
 

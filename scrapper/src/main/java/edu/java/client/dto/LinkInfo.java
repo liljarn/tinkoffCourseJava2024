@@ -1,7 +1,7 @@
 package edu.java.client.dto;
 
-import java.net.URL;
+import java.net.URI;
 import java.time.OffsetDateTime;
 
-public record LinkInfo(URL url, String title, OffsetDateTime lastActivityDate) {
+public record LinkInfo(URI url, String title, OffsetDateTime lastActivityDate) {
 }

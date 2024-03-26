@@ -4,7 +4,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.github.GitHubInfoProvider;
-import java.net.URL;
+import java.net.URI;
+import edu.java.exceptions.LinkNotSupportedException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GitHubInfoProviderTest {
     private static final String API_LINK = "/repos/liljarn/tinkoffCourseJava2023";
@@ -55,21 +57,20 @@ public class GitHubInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
         //Act
-        LinkInfo info = client.fetchData(new URL(LINK));
+        LinkInfo info = client.fetchData(URI.create(LINK));
         //Assert
-        assertThat(info).extracting(LinkInfo::url, LinkInfo::title).contains(new URL(LINK), "tinkoffCourseJava2023");
+        assertThat(info).extracting(LinkInfo::url, LinkInfo::title).contains(URI.create(LINK), "tinkoffCourseJava2023");
     }
 
     @Test
     @DisplayName("Nonexistent GitHub repository link test")
     @SneakyThrows
-    public void fetchData_shouldReturnNull_whenRepositoryDoesNotExist() {
+    public void fetchData_shouldThrowLinkNotSupportedException_whenRepositoryDoesNotExist() {
         //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
-        //Act
-        LinkInfo info = client.fetchData(new URL("https://github.com/repos/aboba/abobus"));
-        //Assert
-        assertThat(info).isNull();
+        //Expect
+        assertThatThrownBy(() -> client.fetchData(URI.create("https://github.com/repos/aboba/abobus")))
+            .isInstanceOf(LinkNotSupportedException.class);
     }
 
     @Test
@@ -79,7 +80,7 @@ public class GitHubInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
         //Act
-        LinkInfo info = client.fetchData(new URL(NOT_GITHUB_LINK));
+        LinkInfo info = client.fetchData(URI.create(NOT_GITHUB_LINK));
         //Assert
         assertThat(info).isNull();
     }
@@ -91,7 +92,7 @@ public class GitHubInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
         //Act
-        boolean response = client.isValidated(new URL(LINK));
+        boolean response = client.isValidated(URI.create(LINK));
         //Assert
         assertThat(response).isTrue();
     }
@@ -103,7 +104,7 @@ public class GitHubInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl());
         //Act
-        boolean response = client.isValidated(new URL(NOT_GITHUB_LINK));
+        boolean response = client.isValidated(URI.create(NOT_GITHUB_LINK));
         //Assert
         assertThat(response).isFalse();
     }

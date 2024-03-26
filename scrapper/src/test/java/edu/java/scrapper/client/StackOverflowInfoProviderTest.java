@@ -4,7 +4,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
-import java.net.URL;
+import java.net.URI;
+import edu.java.exceptions.LinkNotSupportedException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class StackOverflowInfoProviderTest {
     private static final String API_LINK = "/questions/53579112*";
@@ -47,22 +49,21 @@ public class StackOverflowInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
         //Act
-        LinkInfo info = client.fetchData(new URL(LINK));
+        LinkInfo info = client.fetchData(URI.create(LINK));
         //Assert
         assertThat(info).extracting(LinkInfo::url, LinkInfo::title)
-            .contains(new URL(LINK), "Inject list of all beans with a certain interface");
+            .contains(URI.create(LINK), "Inject list of all beans with a certain interface");
     }
 
     @Test
     @DisplayName("Nonexistent StackOverflow question link test")
     @SneakyThrows
-    public void fetchData_shouldReturnNull_whenQuestionDoesNotExist() {
+    public void fetchData_shouldThrowLinkNotSupportedException_whenQuestionDoesNotExist() {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
-        //Act
-        LinkInfo info = client.fetchData(new URL("https://stackoverflow.com/questions/10000000000000000/aboba"));
-        //Assert
-        assertThat(info).isNull();
+        URI url = URI.create("https://stackoverflow.com/questions/10000000000000000/aboba");
+        //Expected
+        assertThatThrownBy(()->client.fetchData(url)).isInstanceOf(LinkNotSupportedException.class);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class StackOverflowInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
         //Act
-        LinkInfo info = client.fetchData(new URL(NOT_STACKOVERFLOW_LINK));
+        LinkInfo info = client.fetchData(URI.create(NOT_STACKOVERFLOW_LINK));
         //Assert
         assertThat(info).isNull();
     }
@@ -84,7 +85,7 @@ public class StackOverflowInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
         //Act
-        boolean response = client.isValidated(new URL(LINK));
+        boolean response = client.isValidated(URI.create(LINK));
         //Assert
         assertThat(response).isTrue();
     }
@@ -96,7 +97,7 @@ public class StackOverflowInfoProviderTest {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
         //Act
-        boolean response = client.isValidated(new URL(NOT_STACKOVERFLOW_LINK));
+        boolean response = client.isValidated(URI.create(NOT_STACKOVERFLOW_LINK));
         //Assert
         assertThat(response).isFalse();
     }
@@ -106,3 +107,4 @@ public class StackOverflowInfoProviderTest {
         server.stop();
     }
 }
+

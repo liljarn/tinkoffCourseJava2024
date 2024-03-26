@@ -4,6 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public class ChatNotAuthorizedException extends ScrapperException {
     public ChatNotAuthorizedException() {
-        super("Чат незарегистрирован", HttpStatus.UNAUTHORIZED, "Нельзя вводить команды до регистрации");
+        super(
+            "Чат не зарегистрирован",
+            HttpStatus.UNAUTHORIZED,
+            "Вы не зарегистрированы: введите /start для начала работы"
+        );
     }
 }

@@ -7,12 +7,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ClientConfig {
-    @Value("client.bot.base-url")
+    @Value("${client.bot.base-url}")
     private String botUrl;
 
     @Bean
     public WebClient webClient() {
-        return (botUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8080").build()
+        return (botUrl == null || botUrl.isEmpty())
+            ? WebClient.builder().baseUrl("http://localhost:8080").build()
             : WebClient.builder().baseUrl(botUrl).build();
     }
 }

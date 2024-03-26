@@ -4,10 +4,16 @@ import edu.java.bot.dto.client.AddLinkRequest;
 import edu.java.bot.dto.client.LinkResponse;
 import edu.java.bot.dto.client.ListLinksResponse;
 import edu.java.bot.dto.client.RemoveLinkRequest;
+import edu.java.bot.dto.response.ApiErrorResponse;
+import edu.java.bot.exception.ScrapperException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +30,7 @@ public class ScrapperClient {
             .uri(LINK_ENDPOINT)
             .header(TG_CHAT_HEADER, chatId.toString())
             .retrieve()
+            .onStatus(HttpStatusCode::isError, this::handleError)
             .bodyToMono(ListLinksResponse.class)
             .block();
     }
@@ -35,6 +42,7 @@ public class ScrapperClient {
             .header(TG_CHAT_HEADER, chatId.toString())
             .bodyValue(addLinkRequest)
             .retrieve()
+            .onStatus(HttpStatusCode::isError, this::handleError)
             .bodyToMono(LinkResponse.class)
             .block();
     }
@@ -46,6 +54,7 @@ public class ScrapperClient {
             .header(TG_CHAT_HEADER, chatId.toString())
             .bodyValue(removeLinkRequest)
             .retrieve()
+            .onStatus(HttpStatusCode::isError, this::handleError)
             .bodyToMono(LinkResponse.class)
             .block();
     }
@@ -53,8 +62,9 @@ public class ScrapperClient {
     public void registerChat(Long chatId) {
         webClient
             .post()
-            .uri(CHAT_ENDPOINT, chatId)
+            .uri(CHAT_ENDPOINT + "/" + chatId.toString())
             .retrieve()
+            .onStatus(HttpStatusCode::isError, this::handleError)
             .bodyToMono(Void.class)
             .block();
     }
@@ -62,9 +72,19 @@ public class ScrapperClient {
     public void deleteChat(Long chatId) {
         webClient
             .delete()
-            .uri(CHAT_ENDPOINT, chatId)
+            .uri(CHAT_ENDPOINT + "/" + chatId)
             .retrieve()
+            .onStatus(HttpStatusCode::isError, this::handleError)
             .bodyToMono(Void.class)
             .block();
+    }
+
+    private Mono<? extends Throwable> handleError(ClientResponse clientResponse) {
+        return clientResponse.bodyToMono(ApiErrorResponse.class)
+            .flatMap(apiErrorResponse -> Mono.error(new ScrapperException(
+                apiErrorResponse.description(),
+                HttpStatus.valueOf(Integer.parseInt(apiErrorResponse.code())),
+                apiErrorResponse.exceptionMessage()
+            )));
     }
 }

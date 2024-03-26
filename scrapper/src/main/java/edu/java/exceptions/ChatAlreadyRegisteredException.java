@@ -4,6 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class ChatAlreadyRegisteredException extends ScrapperException {
     public ChatAlreadyRegisteredException() {
-        super("Пользователь уже зарегистрирован", HttpStatus.CONFLICT, "Невозможно зарегистрировать пользователя");
+        super("Невозможно зарегистрировать пользователя", HttpStatus.CONFLICT, "Пользователь уже зарегистрирован");
     }
 }

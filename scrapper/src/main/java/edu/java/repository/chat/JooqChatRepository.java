@@ -3,8 +3,10 @@ package edu.java.repository.chat;
 import edu.java.repository.jooq.tables.Chat;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
+@Component
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext context;
 

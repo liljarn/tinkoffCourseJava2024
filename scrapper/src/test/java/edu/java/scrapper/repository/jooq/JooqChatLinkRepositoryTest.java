@@ -2,6 +2,7 @@ package edu.java.scrapper.repository.jooq;
 
 import edu.java.dto.ChatLinkResponse;
 import edu.java.repository.chat_link.ChatLinkRepository;
+import edu.java.repository.chat_link.JooqChatLinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,7 @@ public class JooqChatLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private ChatLinkRepository repository;
-
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
+    private JooqChatLinkRepository repository;
 
     @Transactional
     @Rollback

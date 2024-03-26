@@ -18,7 +18,7 @@ import edu.java.repository.chat_link.JdbcChatLinkRepository;
 import edu.java.repository.link.JdbcLinkRepository;
 import edu.java.repository.link.LinkRepository;
 import edu.java.service.link.LinkService;
-import edu.java.service.link.JdbcLinkService;
+import edu.java.service.link.DefaultLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class JdbcLinkServiceTest {
+public class DefaultLinkServiceTest {
     @Test
     public void addLink_shouldReturnLinkResponse_whenLinkIsValidAndLinkWasNotInBd() {
         //Arrange
@@ -46,7 +46,7 @@ public class JdbcLinkServiceTest {
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
         Mockito.when(client.fetchData(url)).thenReturn(List.of(new LinkInfo(url, "title", OffsetDateTime.now())));
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Act
         LinkResponse response = service.addLink(chatId, addLinkRequest);
@@ -73,7 +73,7 @@ public class JdbcLinkServiceTest {
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
         Mockito.doThrow(LinkNotSupportedException.class).when(client).fetchData(url);
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         //Expect
         assertThatThrownBy(() -> service.addLink(chatId, addLinkRequest)).isInstanceOf(LinkNotSupportedException.class);
     }
@@ -91,7 +91,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatRepository.isInTable(chatId)).thenReturn(true);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(false);
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         //Expect
         assertThatThrownBy(() -> service.addLink(chatId, addLinkRequest)).isInstanceOf(LinkNotSupportedException.class);
     }
@@ -115,7 +115,7 @@ public class JdbcLinkServiceTest {
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
         Mockito.when(client.fetchData(url)).thenReturn(List.of(new LinkInfo(url, "title", OffsetDateTime.now())));
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         //Expect
         assertThatThrownBy(() -> service.addLink(
             chatId,
@@ -143,7 +143,7 @@ public class JdbcLinkServiceTest {
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
         Mockito.when(client.isValidated(url)).thenReturn(true);
         Mockito.when(client.fetchData(url)).thenReturn(List.of(new LinkInfo(url, "title", OffsetDateTime.now())));
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Act
         LinkResponse response = service.addLink(chatId, addLinkRequest);
@@ -164,7 +164,7 @@ public class JdbcLinkServiceTest {
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
         Mockito.when(chatRepository.isInTable(chatId)).thenReturn(false);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         //Expect
         assertThatThrownBy(() -> service.addLink(
             chatId,
@@ -187,7 +187,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatLinkRepository.hasChats(linkId)).thenReturn(false);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Act
         LinkResponse response = service.deleteLink(chatId, removeLinkRequest);
@@ -211,7 +211,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatLinkRepository.hasChats(linkId)).thenReturn(true);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Act
         LinkResponse response = service.deleteLink(chatId, removeLinkRequest);
@@ -233,7 +233,7 @@ public class JdbcLinkServiceTest {
         Mockito.when(chatLinkRepository.isTracked(chatId, linkId)).thenReturn(false);
         ChatRepository chatRepository = Mockito.mock(JdbcChatRepository.class);
         ClientInfoProvider client = Mockito.mock(GitHubInfoProvider.class);
-        LinkService service = new JdbcLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
+        LinkService service = new DefaultLinkService(linkRepository, chatLinkRepository, chatRepository, List.of(client));
         LinkResponse expected = new LinkResponse(linkId, url);
         //Expected
         assertThatThrownBy(()->service.deleteLink(chatId, removeLinkRequest)).isInstanceOf(LinkNotFoundException.class);

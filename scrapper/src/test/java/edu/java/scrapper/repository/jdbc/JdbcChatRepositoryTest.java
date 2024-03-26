@@ -1,6 +1,6 @@
 package edu.java.scrapper.repository.jdbc;
 
-import edu.java.repository.chat.ChatRepository;
+import edu.java.repository.chat.JdbcChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private ChatRepository chatRepository;
-
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jdbc");
-    }
+    private JdbcChatRepository chatRepository;
 
     @Test
     @Transactional

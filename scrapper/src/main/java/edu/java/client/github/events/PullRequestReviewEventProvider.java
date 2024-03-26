@@ -6,10 +6,13 @@ import org.springframework.stereotype.Component;
 public class PullRequestReviewEventProvider implements EventProvider {
     @Override
     public String getMessage(GitHubEvent event) {
-        String user = "Пользователь <b>" + event.actor().login() + "</b>";
+        String user = event.actor().login();
         String title = event.payload().pullRequest().title();
         String url = event.payload().pullRequest().url();
-        return user + " начал ревьюить PullRequest \"" + makeHyperlink(url, title) + "\" \uD83E\uDD76: ";
+        return "%s начал ревьюить PullRequest \"%s\" \uD83E\uDD76: ".formatted(
+            makeUserText(user),
+            makeHyperlink(url, title)
+        );
     }
 
     @Override

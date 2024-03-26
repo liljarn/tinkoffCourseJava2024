@@ -9,6 +9,7 @@ import edu.java.bot.keyboard.InlineKeyboardBuilder;
 import edu.java.bot.service.command.CommandService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import static edu.java.bot.utils.MessageConstants.EMPTY_TRACK_LIST;
 import static edu.java.bot.utils.MessageConstants.SUCCESSFUL_DELETE;
@@ -19,6 +20,7 @@ import static edu.java.bot.utils.MessageConstants.UNTRACK_WRONG_TEXT;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class CommandUntrack implements Command {
     private final CommandService service;
 
@@ -60,6 +62,7 @@ public class CommandUntrack implements Command {
         try {
             service.removeLink(chatId, removeLinkRequest);
         } catch (ScrapperException e) {
+            log.info(e);
             return new SendMessage(chatId, e.getMessage());
         }
         return new SendMessage(chatId, SUCCESSFUL_DELETE);

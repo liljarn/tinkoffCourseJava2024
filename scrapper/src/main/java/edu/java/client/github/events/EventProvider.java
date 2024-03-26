@@ -8,4 +8,8 @@ public interface EventProvider {
     default String makeHyperlink(String url, String title) {
         return "<a href=\"" + url + "\">" + title + "</a>";
     }
+
+    default String makeUserText(String user) {
+        return "Пользователь <b>%s</b>".formatted(user);
+    }
 }

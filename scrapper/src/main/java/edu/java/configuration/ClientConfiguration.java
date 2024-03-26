@@ -20,23 +20,22 @@ public class ClientConfiguration {
 
     @Bean
     public WebClient webClient() {
-        return (botBaseUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8090").build()
+        return (botBaseUrl == null || botBaseUrl.isEmpty())
+            ? WebClient.builder().baseUrl("http://localhost:8090").build()
             : WebClient.builder().baseUrl(botBaseUrl).build();
     }
 
     @Bean
     public GitHubInfoProvider gitHubInfoProvider(List<EventProvider> eventProviderList) {
-        if (githubBaseUrl == null || githubBaseUrl.isEmpty()) {
-            return new GitHubInfoProvider(eventProviderList);
-        }
-        return new GitHubInfoProvider(githubBaseUrl, eventProviderList);
+        return (githubBaseUrl == null || githubBaseUrl.isEmpty())
+            ? new GitHubInfoProvider(eventProviderList)
+            : new GitHubInfoProvider(githubBaseUrl, eventProviderList);
     }
 
     @Bean
     public StackOverflowInfoProvider stackOverflowInfoProvider() {
-        if (stackoverflowBaseUrl == null || stackoverflowBaseUrl.isEmpty()) {
-            return new StackOverflowInfoProvider();
-        }
-        return new StackOverflowInfoProvider(stackoverflowBaseUrl);
+        return (stackoverflowBaseUrl == null || stackoverflowBaseUrl.isEmpty())
+            ? new StackOverflowInfoProvider()
+            : new StackOverflowInfoProvider(stackoverflowBaseUrl);
     }
 }

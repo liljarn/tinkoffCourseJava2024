@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 public class ForkEventProvider implements EventProvider {
     @Override
     public String getMessage(GitHubEvent event) {
-        String user = "Пользователь <b>" + event.actor().login() + "</b>";
-        return user + " форкнул репозиторий \uD83E\uDD78: ";
+        String user = event.actor().login();
+        return "%s форкнул репозиторий \uD83E\uDD78: ".formatted(makeUserText(user));
     }
 
     @Override

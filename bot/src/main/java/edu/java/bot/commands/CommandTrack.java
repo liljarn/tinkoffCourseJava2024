@@ -8,6 +8,7 @@ import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.service.command.CommandService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND;
 import static edu.java.bot.utils.MessageConstants.TRACK_COMMAND_ONLY;
@@ -17,6 +18,7 @@ import static edu.java.bot.utils.MessageConstants.URL_START;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class CommandTrack implements Command {
     private final CommandService commandService;
 
@@ -40,8 +42,9 @@ public class CommandTrack implements Command {
         } else if (data.length == 2 && isUrl(data[1])) {
             try {
                 LinkResponse response = commandService.addLink(chatId, new AddLinkRequest(URI.create(data[1])));
-                return new SendMessage(chatId, "Вебсайт " + response.url() + " теперь отслеживается.");
+                return new SendMessage(chatId, "Вебсайт %s теперь отслеживается.".formatted(response.url()));
             } catch (ScrapperException e) {
+                log.info(e);
                 return new SendMessage(chatId, e.getMessage());
             }
         }

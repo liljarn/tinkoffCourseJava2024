@@ -6,15 +6,18 @@ import org.springframework.stereotype.Component;
 public class IssuesEventProvider implements EventProvider {
     @Override
     public String getMessage(GitHubEvent event) {
-        String user = "Пользователь <b>" + event.actor().login() + "</b>";
+        String user = event.actor().login();
         String url = event.payload().issue().url();
         String title = event.payload().issue().title();
         if (event.payload().action().equals("opened")) {
-            return  user + " создал новый issue \"" + makeHyperlink(url, title) + "\" \uD83D\uDC80: ";
+            return  "%s создал новый issue \"%s\" \uD83D\uDC80: ".formatted(
+                makeUserText(user),
+                makeHyperlink(url, title)
+            );
         } else if (event.payload().action().equals("closed")) {
-            return "Был решён issue \"" + makeHyperlink(url, title) + "\" \uD83D\uDE0E: ";
+            return "Был решён issue \"%s\" \uD83D\uDE0E: ".formatted(makeHyperlink(url, title));
         } else {
-            return  "Произошли изменения issue \"" + makeHyperlink(url, title) + "\": ";
+            return  "Произошли изменения issue \"%s\": ".formatted(makeHyperlink(url, title));
         }
     }
 

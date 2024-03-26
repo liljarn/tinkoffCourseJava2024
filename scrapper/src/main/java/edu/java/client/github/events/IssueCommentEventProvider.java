@@ -6,10 +6,13 @@ import org.springframework.stereotype.Component;
 public class IssueCommentEventProvider implements EventProvider {
     @Override
     public String getMessage(GitHubEvent event) {
-        String user = "Пользователь <b>" + event.actor().login() + "</b>";
+        String user = event.actor().login();
         String url = event.payload().issue().url();
         String title = event.payload().issue().title();
-        return user + " оставил комментарий к \"" + makeHyperlink(url, title) + "\" \uD83E\uDDD0: ";
+        return "%s оставил комментарий к \"%s\" \uD83E\uDDD0: ".formatted(
+            makeUserText(user),
+            makeHyperlink(url, title)
+        );
     }
 
     @Override

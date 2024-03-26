@@ -6,14 +6,12 @@ import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandUntrack;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import static edu.java.bot.utils.MessageConstants.NOT_COMMAND;
 import static edu.java.bot.utils.MessageConstants.NOT_TEXT;
 
 @Component
 @RequiredArgsConstructor
-@Log4j2
 public class MessageProcessor implements Processor {
     private final List<Command> commandsList;
 

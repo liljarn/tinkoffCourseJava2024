@@ -1,25 +1,32 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jooq;
 
 import edu.java.dto.ChatLinkResponse;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
+public class JooqChatLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private ChatLinkRepository repository;
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jooq");
+    }
 
     @Transactional
     @Rollback

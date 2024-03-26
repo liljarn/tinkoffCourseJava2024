@@ -1,22 +1,23 @@
 package edu.java.repository.link;
 
-import edu.java.client.dto.LinkInfo;
 import edu.java.dto.LinkData;
 import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
+import java.net.URI;
+import java.time.OffsetDateTime;
 
 public interface LinkRepository {
     ListLinksResponse findAll(Long chatId);
 
-    LinkResponse add(Long chatId, AddLinkRequest addLinkRequest);
+    LinkResponse add(AddLinkRequest addLinkRequest);
 
-    LinkResponse remove(Long chatId, RemoveLinkRequest removeLinkRequest);
+    LinkResponse remove(RemoveLinkRequest removeLinkRequest);
 
     LinkData getData(Long linkId);
 
-    void updateLink(LinkInfo info);
+    void updateLink(URI url, OffsetDateTime checkTime, OffsetDateTime lastUpdateTime);
 
     Long getLinkId(String url);
 }

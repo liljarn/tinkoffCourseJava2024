@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS link
     link_id             BIGINT                              GENERATED ALWAYS AS IDENTITY,
     last_update_time    TIMESTAMP WITH TIME ZONE            DEFAULT CURRENT_TIMESTAMP,
     checked_at          TIMESTAMP WITH TIME ZONE            DEFAULT '1970-01-01 00:00:00+00',
-    name                varchar(100),
     url                 text                                NOT NULL,
 
     PRIMARY KEY (link_id),

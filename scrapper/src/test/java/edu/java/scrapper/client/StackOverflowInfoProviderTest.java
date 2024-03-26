@@ -5,8 +5,8 @@ import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
 import java.net.URI;
+import java.util.List;
 import edu.java.exceptions.LinkNotSupportedException;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,20 +44,20 @@ public class StackOverflowInfoProviderTest {
 
     @Test
     @DisplayName("Existing StackOverflow question link test")
-    @SneakyThrows
     public void fetchData_shouldReturnCorrectData_whenQuestionExists() {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        URI url = URI.create(LINK);
+        String title = "Был обновлён вопрос \"Inject list of all beans with a certain interface\": ";
         //Act
-        LinkInfo info = client.fetchData(URI.create(LINK));
+        List<LinkInfo> info = client.fetchData(url);
         //Assert
-        assertThat(info).extracting(LinkInfo::url, LinkInfo::title)
-            .contains(URI.create(LINK), "Inject list of all beans with a certain interface");
+        assertThat(info.get(0)).extracting(LinkInfo::url, LinkInfo::title)
+            .contains(url, title);
     }
 
     @Test
     @DisplayName("Nonexistent StackOverflow question link test")
-    @SneakyThrows
     public void fetchData_shouldThrowLinkNotSupportedException_whenQuestionDoesNotExist() {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
@@ -68,19 +68,17 @@ public class StackOverflowInfoProviderTest {
 
     @Test
     @DisplayName("Not StackOverflow link test")
-    @SneakyThrows
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
         //Act
-        LinkInfo info = client.fetchData(URI.create(NOT_STACKOVERFLOW_LINK));
+        List<LinkInfo> info = client.fetchData(URI.create(NOT_STACKOVERFLOW_LINK));
         //Assert
         assertThat(info).isNull();
     }
 
     @Test
     @DisplayName("StackOverflow question link test")
-    @SneakyThrows
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
@@ -92,7 +90,6 @@ public class StackOverflowInfoProviderTest {
 
     @Test
     @DisplayName("Not StackOverflow question link test")
-    @SneakyThrows
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
         //Arrange
         ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());

@@ -2,9 +2,10 @@ package edu.java.client;
 
 import edu.java.client.dto.LinkInfo;
 import java.net.URI;
+import java.util.List;
 
 public interface ClientInfoProvider {
-    LinkInfo fetchData(URI url);
+    List<LinkInfo> fetchData(URI url);
 
     boolean isValidated(URI url);
 }

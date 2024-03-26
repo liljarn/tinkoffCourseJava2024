@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import static edu.java.bot.utils.MessageConstants.EMPTY_TRACK_LIST;
 import static edu.java.bot.utils.MessageConstants.LIST_COMMAND;
 import static edu.java.bot.utils.MessageConstants.LIST_COMMANDS_TEXT;
 import static edu.java.bot.utils.MessageConstants.LIST_WRONG_TEXT;
@@ -30,7 +31,7 @@ public class CommandListTest {
         //Act
         SendMessage message = command.handle(mockUpdate);
         //Assert
-        assertThat(message.getParameters().get("text")).isEqualTo("Вы не отслеживаете *ни одной* ссылки");
+        assertThat(message.getParameters().get("text")).isEqualTo(EMPTY_TRACK_LIST);
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.service.command.CommandService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import static edu.java.bot.utils.MessageConstants.START_COMMAND;
 import static edu.java.bot.utils.MessageConstants.START_DESCRIPTION;
@@ -13,6 +14,7 @@ import static edu.java.bot.utils.MessageConstants.START_WRONG_TEXT;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class CommandStart implements Command {
     private final CommandService commandService;
 
@@ -33,6 +35,7 @@ public class CommandStart implements Command {
             try {
                 commandService.registerChat(chatId);
             } catch (ScrapperException e) {
+                log.info(e);
                 return new SendMessage(chatId, e.getMessage());
             }
             return new SendMessage(chatId, START_MESSAGE);

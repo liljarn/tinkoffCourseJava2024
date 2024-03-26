@@ -5,7 +5,7 @@ import edu.java.exceptions.ChatNotFoundException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat.JdbcChatRepository;
 import edu.java.service.chat.ChatService;
-import edu.java.service.chat.jdbc.JdbcChatService;
+import edu.java.service.chat.JdbcChatService;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

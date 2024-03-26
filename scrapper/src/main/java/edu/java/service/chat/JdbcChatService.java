@@ -1,9 +1,8 @@
-package edu.java.service.chat.jdbc;
+package edu.java.service.chat;
 
 import edu.java.exceptions.ChatAlreadyRegisteredException;
 import edu.java.exceptions.ChatNotFoundException;
 import edu.java.repository.chat.ChatRepository;
-import edu.java.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

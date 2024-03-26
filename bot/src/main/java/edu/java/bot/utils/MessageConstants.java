@@ -16,23 +16,25 @@ public class MessageConstants {
     public static final String LIST_DESCRIPTION = "Вывести список отслеживаемых ресурсов.";
     public static final String SUCCESSFUL_DELETE = "Ссылка успешно удалена.";
     public static final String NOT_COMMAND =
-        "Не понимаю :(, напишите команду /help для вывода *списка* доступных команд.";
+        "Не понимаю :(, напишите команду /help для вывода <b>списка</b> доступных команд.";
     public static final String NOT_TEXT =
-        "*Пожалуйста*, не отправляйте что-либо кроме текста, мне тяжело это обрабатывать :(";
+        "<b>Пожалуйста</b>, не отправляйте что-либо кроме текста, мне тяжело это обрабатывать :(";
     public static final String HELP_COMMANDS_LIST = "Список команд:\n";
-    public static final String HELP_WRONG_TEXT = "Для вывода всех команд введите *только* команду /help.";
-    public static final String LIST_COMMANDS_TEXT = "*Вот список отслеживаемых страниц:*\n";
-    public static final String START_MESSAGE = "Хей)\nВы запустили бота для *отслеживания изменений* на GitHub и"
-        + " StackOverflow. Для *подробного* описания всех комманд введите /help.";
-    public static final String START_WRONG_TEXT = "Для начала работы введите *только* команду /start.";
-    public static final String TRACK_COMMAND_ONLY = "Введите команду /track и *ссылку* на ресурс.";
+    public static final String HELP_WRONG_TEXT = "Для вывода всех команд введите <b>только</b> команду /help.";
+    public static final String LIST_COMMANDS_TEXT = "Вот список <b>отслеживаемых страниц</b>:\n";
+    public static final String START_MESSAGE = "Хей)\nВы запустили бота для <b>отслеживания изменений</b> на GitHub и"
+                                               + " StackOverflow. "
+                                               + "Для <b>подробного</b> описания всех комманд введите /help.";
+    public static final String START_WRONG_TEXT = "Для начала работы введите <b>только</b> команду /start.";
+    public static final String TRACK_COMMAND_ONLY = "Введите команду /track и <b>ссылку</b> на ресурс.";
     public static final String TRACK_WRONG_TEXT =
-        "*Неверно* введена *команда* /track или *сслыка*. Введите команду /track и ссылку на ресурс раздельно."
-            + " Ссылка должна начинаться с https://";
+        "<b>Неверно</b> введена <b>команда</b> /track или <b>сслыка</b>. Введите команду /track "
+        + "и ссылку на ресурс раздельно."
+        + " Ссылка должна начинаться с https://";
     public static final String URL_START = "https://";
-    public static final String UNTRACK_MESSAGE = "Выберите *страницу*, которую хотите перестать отслеживать.";
-    public static final String UNTRACK_WRONG_TEXT = "Введите *только* команду /untrack.";
-    public static final String LIST_WRONG_TEXT = "Введите *только* команду /list.";
+    public static final String UNTRACK_MESSAGE = "Выберите <b>страницу</b>, которую хотите перестать отслеживать.";
+    public static final String UNTRACK_WRONG_TEXT = "Введите <b>только</b> команду /untrack.";
+    public static final String LIST_WRONG_TEXT = "Введите <b>только</b> команду /list.";
     public static final String DASH = " — ";
-    public static final String EMPTY_TRACK_LIST = "Вы не отслеживаете *ни одной* ссылки";
+    public static final String EMPTY_TRACK_LIST = "Вы не отслеживаете <b>ни одной</b> ссылки";
 }

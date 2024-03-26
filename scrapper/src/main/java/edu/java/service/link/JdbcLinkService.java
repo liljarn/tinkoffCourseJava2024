@@ -1,4 +1,4 @@
-package edu.java.service.link.jdbc;
+package edu.java.service.link;
 
 import edu.java.client.ClientInfoProvider;
 import edu.java.dto.request.AddLinkRequest;
@@ -7,11 +7,11 @@ import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListLinksResponse;
 import edu.java.exceptions.ChatNotAuthorizedException;
 import edu.java.exceptions.LinkAlreadyTrackedException;
+import edu.java.exceptions.LinkNotFoundException;
 import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
-import edu.java.service.link.LinkService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class JdbcLinkService implements LinkService {
                 Long linkId = linkRepository.getLinkId(addLinkRequest.link().toString());
                 if (linkId == 0) {
                     client.fetchData(addLinkRequest.link());
-                    LinkResponse response = linkRepository.add(chatId, addLinkRequest);
+                    LinkResponse response = linkRepository.add(addLinkRequest);
                     chatLinkRepository.add(chatId, response.id());
                     return response;
                 }
@@ -59,10 +59,13 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
-        LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
-        if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
-            return linkRepository.remove(chatId, removeLinkRequest);
+        if (chatLinkRepository.isTracked(chatId, removeLinkRequest.id())) {
+            LinkResponse response = chatLinkRepository.remove(chatId, removeLinkRequest.id());
+            if (!chatLinkRepository.hasChats(removeLinkRequest.id())) {
+                return linkRepository.remove(removeLinkRequest);
+            }
+            return response;
         }
-        return response;
+        throw new LinkNotFoundException();
     }
 }

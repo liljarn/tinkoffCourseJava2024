@@ -1,7 +1,9 @@
 package edu.java.configuration;
 
 import edu.java.client.github.GitHubInfoProvider;
+import edu.java.client.github.events.EventProvider;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,26 +18,24 @@ public class ClientConfiguration {
     @Value("${client.stackoverflow.base-url}")
     private String stackoverflowBaseUrl;
 
-
     @Bean
     public WebClient webClient() {
-        return (botBaseUrl.isEmpty()) ? WebClient.builder().baseUrl("http://localhost:8090").build()
+        return (botBaseUrl == null || botBaseUrl.isEmpty())
+            ? WebClient.builder().baseUrl("http://localhost:8090").build()
             : WebClient.builder().baseUrl(botBaseUrl).build();
     }
 
     @Bean
-    public GitHubInfoProvider gitHubInfoProvider() {
-        if (githubBaseUrl == null || githubBaseUrl.isEmpty()) {
-            return new GitHubInfoProvider();
-        }
-        return new GitHubInfoProvider(githubBaseUrl);
+    public GitHubInfoProvider gitHubInfoProvider(List<EventProvider> eventProviderList) {
+        return (githubBaseUrl == null || githubBaseUrl.isEmpty())
+            ? new GitHubInfoProvider(eventProviderList)
+            : new GitHubInfoProvider(githubBaseUrl, eventProviderList);
     }
 
     @Bean
     public StackOverflowInfoProvider stackOverflowInfoProvider() {
-        if (stackoverflowBaseUrl == null || stackoverflowBaseUrl.isEmpty()) {
-            return new StackOverflowInfoProvider();
-        }
-        return new StackOverflowInfoProvider(stackoverflowBaseUrl);
+        return (stackoverflowBaseUrl == null || stackoverflowBaseUrl.isEmpty())
+            ? new StackOverflowInfoProvider()
+            : new StackOverflowInfoProvider(stackoverflowBaseUrl);
     }
 }

@@ -3,7 +3,7 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 5s
-  database-access-type: jpa
+  database-access-type: jdbc
 
 spring:
   application:
@@ -54,6 +54,31 @@ client:
     access-token: ${STACKOVERFLOW_ACCESS_TOKEN:}
     key: ${STACKOVERFLOW_KEY:}
 
+retry-config:
+  retries:
+    - client: bot
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: github
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: stackoverflow
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+
+
 bucket4j:
   enabled: true
   filters:
@@ -71,9 +96,12 @@ bucket4j:
         }
       rate-limits:
         - bandwidths:
-            - capacity: 1000
-              time: 30
-              unit: minutes
+            - capacity: 1
+              time: 1
+              unit: hours
               refill-speed: interval
-          skip-condition: 
           cache-key: getRemoteAddr()
+          skip-condition: '@limitService.isSkipped(getRemoteAddr())'
+
+rate-limiter:
+  whitelist: 127.0.0.1

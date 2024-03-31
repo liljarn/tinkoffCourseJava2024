@@ -3,6 +3,7 @@ package edu.java.configuration;
 import edu.java.client.github.GitHubInfoProvider;
 import edu.java.client.github.events.EventProvider;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
+import edu.java.retry.RetryFactory;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,24 +19,29 @@ public class ClientConfiguration {
     @Value("${client.stackoverflow.base-url}")
     private String stackoverflowBaseUrl;
 
-    @Bean
-    public WebClient webClient() {
+    @SuppressWarnings("checkstyle:MultipleStringLiterals") @Bean
+    public WebClient webClient(RetryConfiguration retryConfiguration) {
         return (botBaseUrl == null || botBaseUrl.isEmpty())
-            ? WebClient.builder().baseUrl("http://localhost:8090").build()
-            : WebClient.builder().baseUrl(botBaseUrl).build();
+            ? WebClient.builder().baseUrl("http://localhost:8090")
+            .filter(RetryFactory.buildFilter(RetryFactory.createRetry(retryConfiguration, "bot"))).build()
+            : WebClient.builder().baseUrl(botBaseUrl)
+            .filter(RetryFactory.buildFilter(RetryFactory.createRetry(retryConfiguration, "bot"))).build();
     }
 
     @Bean
-    public GitHubInfoProvider gitHubInfoProvider(List<EventProvider> eventProviderList) {
+    public GitHubInfoProvider gitHubInfoProvider(
+        List<EventProvider> eventProviderList,
+        RetryConfiguration retryConfiguration
+    ) {
         return (githubBaseUrl == null || githubBaseUrl.isEmpty())
-            ? new GitHubInfoProvider(eventProviderList)
-            : new GitHubInfoProvider(githubBaseUrl, eventProviderList);
+            ? new GitHubInfoProvider(eventProviderList, retryConfiguration)
+            : new GitHubInfoProvider(githubBaseUrl, eventProviderList, retryConfiguration);
     }
 
     @Bean
-    public StackOverflowInfoProvider stackOverflowInfoProvider() {
+    public StackOverflowInfoProvider stackOverflowInfoProvider(RetryConfiguration retryConfiguration) {
         return (stackoverflowBaseUrl == null || stackoverflowBaseUrl.isEmpty())
-            ? new StackOverflowInfoProvider()
-            : new StackOverflowInfoProvider(stackoverflowBaseUrl);
+            ? new StackOverflowInfoProvider(retryConfiguration)
+            : new StackOverflowInfoProvider(stackoverflowBaseUrl, retryConfiguration);
     }
 }

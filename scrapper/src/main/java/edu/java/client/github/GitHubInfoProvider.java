@@ -4,6 +4,7 @@ import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.github.events.EventProvider;
 import edu.java.client.github.events.GitHubEvent;
+import edu.java.configuration.RetryConfiguration;
 import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.Arrays;
@@ -24,13 +25,13 @@ public class GitHubInfoProvider extends WebClientInfoProvider {
     @Value("${client.github.token}")
     private String token;
 
-    public GitHubInfoProvider(String apiUrl, List<EventProvider> eventProviders) {
-        super(apiUrl);
+    public GitHubInfoProvider(String apiUrl, List<EventProvider> eventProviders, RetryConfiguration config) {
+        super(apiUrl, config, "github");
         this.eventProviders = eventProviders;
     }
 
-    public GitHubInfoProvider(List<EventProvider> eventProviders) {
-        this(BASE_API_URL, eventProviders);
+    public GitHubInfoProvider(List<EventProvider> eventProviders, RetryConfiguration config) {
+        this(BASE_API_URL, eventProviders, config);
     }
 
     @Override

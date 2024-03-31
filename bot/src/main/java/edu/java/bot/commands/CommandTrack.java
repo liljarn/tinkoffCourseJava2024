@@ -44,7 +44,7 @@ public class CommandTrack implements Command {
                 LinkResponse response = commandService.addLink(chatId, new AddLinkRequest(URI.create(data[1])));
                 return new SendMessage(chatId, "Вебсайт %s теперь отслеживается.".formatted(response.url()));
             } catch (ScrapperException e) {
-                log.info(e);
+                log.error(e);
                 return new SendMessage(chatId, e.getMessage());
             }
         }

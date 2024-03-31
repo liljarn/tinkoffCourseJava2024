@@ -47,12 +47,17 @@ public class CommandUntrack implements Command {
     }
 
     private SendMessage handleCommand(long chatId) {
-        List<LinkResponse> links = service.getLinks(chatId).links();
-        if (links.isEmpty()) {
-            return new SendMessage(chatId, EMPTY_TRACK_LIST);
+        try {
+            List<LinkResponse> links = service.getLinks(chatId).links();
+            if (links.isEmpty()) {
+                return new SendMessage(chatId, EMPTY_TRACK_LIST);
+            }
+            return new SendMessage(chatId, UNTRACK_MESSAGE)
+                .replyMarkup(InlineKeyboardBuilder.createCallbackKeyboard(links));
+        } catch (ScrapperException e) {
+            log.error(e);
+            return new SendMessage(chatId, e.getMessage());
         }
-        return new SendMessage(chatId, UNTRACK_MESSAGE)
-            .replyMarkup(InlineKeyboardBuilder.createCallbackKeyboard(links));
     }
 
     private SendMessage handleCallback(Update update) {
@@ -62,7 +67,7 @@ public class CommandUntrack implements Command {
         try {
             service.removeLink(chatId, removeLinkRequest);
         } catch (ScrapperException e) {
-            log.info(e);
+            log.error(e);
             return new SendMessage(chatId, e.getMessage());
         }
         return new SendMessage(chatId, SUCCESSFUL_DELETE);

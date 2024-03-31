@@ -2,6 +2,7 @@ package edu.java.client.stackoverflow;
 
 import edu.java.client.WebClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
+import edu.java.configuration.RetryConfiguration;
 import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,12 +23,12 @@ public class StackOverflowInfoProvider extends WebClientInfoProvider {
     @Value("${client.stackoverflow.key}")
     private String key;
 
-    public StackOverflowInfoProvider(String apiUrl) {
-        super(apiUrl);
+    public StackOverflowInfoProvider(String apiUrl, RetryConfiguration config) {
+        super(apiUrl, config, "stackoverflow");
     }
 
-    public StackOverflowInfoProvider() {
-        this(BASE_API_URL);
+    public StackOverflowInfoProvider(RetryConfiguration config) {
+        this(BASE_API_URL, config);
     }
 
     @Override

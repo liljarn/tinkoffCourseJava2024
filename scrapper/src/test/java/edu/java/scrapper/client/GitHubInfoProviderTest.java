@@ -6,8 +6,10 @@ import edu.java.client.dto.LinkInfo;
 import edu.java.client.github.GitHubInfoProvider;
 import edu.java.client.github.events.EventProvider;
 import edu.java.client.github.events.PushEventProvider;
+import edu.java.configuration.RetryConfiguration;
 import edu.java.exceptions.LinkNotSupportedException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +60,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Existing GitHub repository link test")
     public void fetchData_shouldReturnCorrectData_whenRepositoryExists() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers, configuration);
         URI url = URI.create(LINK);
         String title =
             "Пользователь <b>liljarn</b> запушил в репозиторий новые коммиты в ветку \"/master\" \uD83E\uDD70: ";
@@ -73,6 +79,10 @@ public class GitHubInfoProviderTest {
     @DisplayName("Not updated GitHub repository link test")
     public void fetchData_shouldEmptyList_whenRepositoryWasNotUpdated() {
         //Arrange
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
         String oldApiLinkEvents = "/repos/liljarn/tinkoff/events";
         String oldApiLink = "/repos/liljarn/tinkoff";
         String oldLink = "https://github.com/repos/liljarn/tinkoff";
@@ -92,7 +102,7 @@ public class GitHubInfoProviderTest {
                     {
                         "text": "test"
                     }""")));
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers, configuration);
         URI url = URI.create(oldLink);
         //Act
         List<LinkInfo> info = client.fetchData(url);
@@ -104,7 +114,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Nonexistent GitHub repository link test")
     public void fetchData_shouldThrowLinkNotSupportedException_whenRepositoryDoesNotExist() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers, configuration);
         URI url = URI.create("https://github.com/repos/aboba/abobus");
         //Expect
         assertThatThrownBy(() -> client.fetchData(url))
@@ -115,7 +129,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Not GitHub link test")
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers, configuration);
         //Act
         List<LinkInfo> info = client.fetchData(URI.create(NOT_GITHUB_LINK));
         //Assert
@@ -126,7 +144,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("GitHub repository link test")
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers, configuration);
         //Act
         boolean response = client.isValidated(URI.create(LINK));
         //Assert
@@ -137,7 +159,11 @@ public class GitHubInfoProviderTest {
     @DisplayName("Not GitHub repository link test")
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
         //Arrange
-        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers);
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new GitHubInfoProvider(server.baseUrl(), providers, configuration);
         //Act
         boolean response = client.isValidated(URI.create(NOT_GITHUB_LINK));
         //Assert

@@ -2,7 +2,9 @@ package edu.java.repository.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class JdbcChatRepository implements ChatRepository {
     private final JdbcTemplate jdbcTemplate;

@@ -1,6 +1,8 @@
 package edu.java.service.link;
 
 import edu.java.client.ClientInfoProvider;
+import edu.java.dto.ChatLinkResponse;
+import edu.java.dto.LinkData;
 import edu.java.dto.request.AddLinkRequest;
 import edu.java.dto.request.RemoveLinkRequest;
 import edu.java.dto.response.LinkResponse;
@@ -12,14 +14,14 @@ import edu.java.exceptions.LinkNotSupportedException;
 import edu.java.repository.chat.ChatRepository;
 import edu.java.repository.chat_link.ChatLinkRepository;
 import edu.java.repository.link.LinkRepository;
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @RequiredArgsConstructor
-public class JdbcLinkService implements LinkService {
+public class DefaultLinkService implements LinkService {
     private final LinkRepository linkRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final ChatRepository chatRepository;
@@ -67,5 +69,23 @@ public class JdbcLinkService implements LinkService {
             return response;
         }
         throw new LinkNotFoundException();
+    }
+
+    @Override
+    @Transactional
+    public List<ChatLinkResponse> findAllChatsByLinksFiltered(OffsetDateTime time) {
+        return chatLinkRepository.findAllFiltered(time);
+    }
+
+    @Override
+    @Transactional
+    public LinkData getData(Long linkId) {
+        return linkRepository.getData(linkId);
+    }
+
+    @Override
+    @Transactional
+    public void updateLink(URI url, OffsetDateTime checkTime, OffsetDateTime lastUpdateTime) {
+        linkRepository.updateLink(url, checkTime, lastUpdateTime);
     }
 }

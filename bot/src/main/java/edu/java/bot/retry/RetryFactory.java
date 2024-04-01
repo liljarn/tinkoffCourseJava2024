@@ -1,7 +1,7 @@
-package edu.java.retry;
+package edu.java.bot.retry;
 
-import edu.java.configuration.RetryConfiguration;
-import edu.java.exceptions.ScrapperServiceUnavailableException;
+import edu.java.bot.configuration.RetryConfiguration;
+import edu.java.bot.exception.ScrapperServiceUnavailableException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +22,9 @@ public class RetryFactory {
         RETRY_MAP.put(
             "fixed",
             retry -> RetryBackoffSpec.fixedDelay(retry.maxAttempts(), retry.delay())
-                .filter(buildErrorList(retry.codes())).onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
+                .filter(buildErrorList(retry.codes())).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                     throw new ScrapperServiceUnavailableException();
-                }))
+                })
         );
         RETRY_MAP.put(
             "linear",
@@ -38,9 +38,9 @@ public class RetryFactory {
         RETRY_MAP.put(
             "exponential",
             retry -> RetryBackoffSpec.backoff(retry.maxAttempts(), retry.delay()).jitter(0.0)
-                .filter(buildErrorList(retry.codes())).onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
+                .filter(buildErrorList(retry.codes())).onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
                     throw new ScrapperServiceUnavailableException();
-                }))
+                })
         );
     }
 
@@ -73,3 +73,4 @@ public class RetryFactory {
         };
     }
 }
+

@@ -3,7 +3,7 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 5s
-  database-access-type: jdbc
+  database-access-type: jpa
 
 spring:
   application:
@@ -91,7 +91,7 @@ bucket4j:
         {
           "description": "Превышено количество запросов с текущего IP",
           "code": 429,
-          "exceptionName": "aboba",
+          "exceptionName": "Rate limit exceeded",
           "exceptionMessage": "Вы <b>превысили</b> количество доступных запросов, попробуйте чуть позже. <b>Имейте совесть</b>, не нагружайте сервер по полной"
         }
       rate-limits:

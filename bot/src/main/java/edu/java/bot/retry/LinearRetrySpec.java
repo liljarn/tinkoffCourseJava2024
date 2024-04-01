@@ -1,6 +1,6 @@
-package edu.java.retry;
+package edu.java.bot.retry;
 
-import edu.java.exceptions.ScrapperServiceUnavailableException;
+import edu.java.bot.exception.ScrapperServiceUnavailableException;
 import java.time.Duration;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +11,11 @@ import reactor.util.retry.Retry;
 
 @RequiredArgsConstructor
 public class LinearRetrySpec extends Retry {
-    public final Duration minBackoff;
-    public final Duration maxBackoff = Duration.ofMillis(Long.MAX_VALUE);
-    public final long maxAttempts;
-    public final long step;
-    public final Predicate<Throwable> errorFilter;
+    private final Duration minBackoff;
+    private final Duration maxBackoff = Duration.ofMillis(Long.MAX_VALUE);
+    private final long maxAttempts;
+    private final long step;
+    private final Predicate<Throwable> errorFilter;
 
     public Flux<Long> generateCompanion(Flux<Retry.RetrySignal> t) {
         return Flux.deferContextual((cv) -> t.contextWrite(cv).concatMap((retryWhenState) -> {

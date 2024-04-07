@@ -26,8 +26,8 @@ public class KafkaUpdateSenderTest extends IntegrationEnvironment {
     private ApplicationConfig config;
 
     @Test
-    @DisplayName("Тестирование KafkaLinkUpdateSender#sendUpdate")
-    public void sendUpdateShouldSendUpdateInKafka() {
+    @DisplayName("sendUpdate test")
+    public void sendUpdate_shouldSendUpdateInKafka() {
         //Arrange
         var linkUpdateSender = new KafkaUpdateSender(kafkaTemplate, config);
         var linkUpdate = new LinkUpdate(

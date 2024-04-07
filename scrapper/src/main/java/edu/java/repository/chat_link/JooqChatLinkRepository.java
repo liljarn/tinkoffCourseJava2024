@@ -9,12 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import static edu.java.repository.jooq.tables.ChatLink.CHAT_LINK;
 import static edu.java.repository.jooq.tables.Link.LINK;
 
 @Log4j2
-@Component
+@Repository
 @RequiredArgsConstructor
 public class JooqChatLinkRepository implements ChatLinkRepository {
     private final DSLContext context;

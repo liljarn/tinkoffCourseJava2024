@@ -106,7 +106,7 @@ bucket4j:
         }
       rate-limits:
         - bandwidths:
-            - capacity: 1
+            - capacity: 1000
               time: 1
               unit: hours
               refill-speed: interval

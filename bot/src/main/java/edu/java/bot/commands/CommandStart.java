@@ -35,7 +35,7 @@ public class CommandStart implements Command {
             try {
                 commandService.registerChat(chatId);
             } catch (ScrapperException e) {
-                log.info(e);
+                log.error(e);
                 return new SendMessage(chatId, e.getMessage());
             }
             return new SendMessage(chatId, START_MESSAGE);

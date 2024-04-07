@@ -3,7 +3,7 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 5s
-  database-access-type: jooq
+  database-access-type: jpa
 
 spring:
   application:
@@ -25,6 +25,13 @@ spring:
       ddl-auto: validate
     open-in-view: false
     show-sql: false
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - rate-limit-bucket
+    caffeine:
+      spec: maximumSize=1000000,expireAfterAccess=3600s
 
 server:
   port: 8080
@@ -46,3 +53,55 @@ client:
     base-url:
     access-token: ${STACKOVERFLOW_ACCESS_TOKEN:}
     key: ${STACKOVERFLOW_KEY:}
+
+retry-config:
+  retries:
+    - client: bot
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: github
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: stackoverflow
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      http-response-headers:
+        Content-Type: "application/json; charset=utf-8"
+      http-response-body: |
+        {
+          "description": "Превышено количество запросов с текущего IP",
+          "code": 429,
+          "exceptionName": "Rate limit exceeded",
+          "exceptionMessage": "Вы <b>превысили</b> количество доступных запросов, попробуйте чуть позже. <b>Имейте совесть</b>, не нагружайте сервер по полной"
+        }
+      rate-limits:
+        - bandwidths:
+            - capacity: 1
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()
+          skip-condition: '@limitService.isSkipped(getRemoteAddr())'
+
+rate-limiter:
+  whitelist: 127.0.0.1

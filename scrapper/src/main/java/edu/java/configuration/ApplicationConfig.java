@@ -14,8 +14,4 @@ public record ApplicationConfig(
 ) {
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
-
-    public enum AccessType {
-        JDBC, JPA, JOOQ
-    }
 }

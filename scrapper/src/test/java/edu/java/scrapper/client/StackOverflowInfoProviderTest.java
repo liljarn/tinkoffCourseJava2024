@@ -5,7 +5,9 @@ import edu.java.client.ClientInfoProvider;
 import edu.java.client.dto.LinkInfo;
 import edu.java.client.stackoverflow.StackOverflowInfoProvider;
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
+import edu.java.configuration.RetryConfiguration;
 import edu.java.exceptions.LinkNotSupportedException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +48,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Existing StackOverflow question link test")
     public void fetchData_shouldReturnCorrectData_whenQuestionExists() {
         //Arrange
-        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("stackoverflow", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl(), configuration);
         URI url = URI.create(LINK);
         String title = "Был обновлён вопрос \"Inject list of all beans with a certain interface\": ";
         //Act
@@ -60,7 +66,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Nonexistent StackOverflow question link test")
     public void fetchData_shouldThrowLinkNotSupportedException_whenQuestionDoesNotExist() {
         //Arrange
-        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("stackoverflow", "linear", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl(), configuration);
         URI url = URI.create("https://stackoverflow.com/questions/10000000000000000/aboba");
         //Expected
         assertThatThrownBy(()->client.fetchData(url)).isInstanceOf(LinkNotSupportedException.class);
@@ -70,7 +80,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Not StackOverflow link test")
     public void fetchData_shouldReturnNull_whenLinkDoesNotSupport() {
         //Arrange
-        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("stackoverflow", "exponential", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl(), configuration);
         //Act
         List<LinkInfo> info = client.fetchData(URI.create(NOT_STACKOVERFLOW_LINK));
         //Assert
@@ -81,7 +95,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("StackOverflow question link test")
     public void isValidate_shouldReturnTrue_whenLinkIsValidated() {
         //Arrange
-        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("stackoverflow", "fixed", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl(), configuration);
         //Act
         boolean response = client.isValidated(URI.create(LINK));
         //Assert
@@ -92,7 +110,11 @@ public class StackOverflowInfoProviderTest {
     @DisplayName("Not StackOverflow question link test")
     public void isValidate_shouldReturnFalse_whenLinkIsNotValidated() {
         //Arrange
-        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl());
+        RetryConfiguration configuration = new RetryConfiguration(
+            List.of(new RetryConfiguration.RetryInfo("stackoverflow", "exponential", 1, 1,
+                Duration.ofSeconds(1), List.of(500)
+            )));
+        ClientInfoProvider client = new StackOverflowInfoProvider(server.baseUrl(), configuration);
         //Act
         boolean response = client.isValidated(URI.create(NOT_STACKOVERFLOW_LINK));
         //Assert

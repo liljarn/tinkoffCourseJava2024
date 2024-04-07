@@ -14,13 +14,16 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 @DirtiesContext
 public abstract class IntegrationEnvironment {
     public static PostgreSQLContainer<?> POSTGRES;
+    public static KafkaContainer KAFKA;
 
     static {
         POSTGRES = new PostgreSQLContainer<>("postgres:16")
@@ -30,6 +33,9 @@ public abstract class IntegrationEnvironment {
         POSTGRES.start();
 
         runMigrations(POSTGRES);
+
+        KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
+        KAFKA.start();
     }
 
     @SneakyThrows
@@ -48,5 +54,12 @@ public abstract class IntegrationEnvironment {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
+    }
+
+    @DynamicPropertySource
+    static void kafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
+        registry.add("spring.kafka.producer.bootstrap-servers", KAFKA::getBootstrapServers);
+        registry.add("app.use-queue", () -> true);
     }
 }

@@ -7,6 +7,20 @@ app:
   topic: "bot-scrapper-mq"
   use-queue: true
 
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: metrics
+
 spring:
   application:
     name: scrapper

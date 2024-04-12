@@ -50,12 +50,12 @@ spring:
       spec: maximumSize=1000000,expireAfterAccess=3600s
   kafka:
     producer:
-      bootstrap-servers: localhost:29092
+      bootstrap-servers: ${KAFKA_URL:}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${KAFKA_URL:}
 
 server:
   port: 8080
@@ -69,7 +69,7 @@ springdoc:
 
 client:
   bot:
-    base-url: http://localhost:8090
+    base-url: ${BOT_URL:}
   github:
     base-url:
     token: ${GITHUB_TOKEN:}
@@ -120,9 +120,9 @@ bucket4j:
         }
       rate-limits:
         - bandwidths:
-            - capacity: 1000
+            - capacity: 10000
               time: 1
-              unit: hours
+              unit: minutes
               refill-speed: interval
           cache-key: getRemoteAddr()
           skip-condition: '@limitService.isSkipped(getRemoteAddr())'

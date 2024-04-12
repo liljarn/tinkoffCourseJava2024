@@ -9,9 +9,8 @@ scrape_configs:
 - job_name: scrapper
   static_configs:
     - targets:
-        - host.docker.internal:8081
+        - scrapper:8081
 - job_name: bot
   static_configs:
     - targets:
-        - host.docker.internal:8091
-#192.168.56.1
+        - bot:8091

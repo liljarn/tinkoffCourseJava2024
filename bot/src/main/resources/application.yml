@@ -1,5 +1,7 @@
 app:
   telegram-token: unset
+  topic-name: "bot-scrapper-mq"
+  use-queue: true
 
 spring:
   application:
@@ -13,6 +15,23 @@ spring:
       - rate-limit-bucket
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:29092
+      group-id: bot
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: edu.java.bot.dto.request.LinkUpdate
+    producer:
+      bootstrap-servers: localhost:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    bootstrap-servers: localhost:29092
 
 server:
   port: 8090

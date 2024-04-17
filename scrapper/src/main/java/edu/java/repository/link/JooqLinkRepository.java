@@ -10,12 +10,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import static edu.java.repository.jooq.tables.ChatLink.CHAT_LINK;
 import static edu.java.repository.jooq.tables.Link.LINK;
 
 @RequiredArgsConstructor
-@Component
+@Repository
 public class JooqLinkRepository implements LinkRepository {
     private final DSLContext context;
 

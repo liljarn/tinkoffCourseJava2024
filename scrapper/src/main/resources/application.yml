@@ -4,6 +4,8 @@ app:
     interval: 10s
     force-check-delay: 5s
   database-access-type: jpa
+  topic: "bot-scrapper-mq"
+  use-queue: true
 
 spring:
   application:
@@ -32,6 +34,14 @@ spring:
       - rate-limit-bucket
     caffeine:
       spec: maximumSize=1000000,expireAfterAccess=3600s
+  kafka:
+    producer:
+      bootstrap-servers: localhost:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    bootstrap-servers: localhost:29092
 
 server:
   port: 8080
@@ -96,7 +106,7 @@ bucket4j:
         }
       rate-limits:
         - bandwidths:
-            - capacity: 1
+            - capacity: 1000
               time: 1
               unit: hours
               refill-speed: interval

@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.service.rate_limit;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;

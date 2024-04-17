@@ -1,12 +1,12 @@
 package edu.java.scheduler;
 
 import edu.java.client.ClientInfoProvider;
-import edu.java.client.bot.BotClient;
 import edu.java.client.dto.LinkInfo;
 import edu.java.dto.ChatLinkResponse;
 import edu.java.dto.LinkData;
 import edu.java.dto.client.LinkUpdate;
 import edu.java.service.link.LinkService;
+import edu.java.service.sender.UpdateSender;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +24,7 @@ public class LinkUpdaterScheduler {
    @Value("${spring.database.check-time-minutes}")
    private int minutesCheckTime;
    private final List<ClientInfoProvider> clientInfoProviders;
-   private final BotClient botClient;
+   private final UpdateSender updateSender;
    private final LinkService linkService;
 
    @Scheduled(fixedDelayString = "#{@'app-edu.java.configuration.ApplicationConfig'.scheduler.interval}")
@@ -52,7 +52,7 @@ public class LinkUpdaterScheduler {
                            info.title(),
                            linkToChats.tgChatIds().stream().toList()
                        );
-                       botClient.sendUpdate(update);
+                       updateSender.sendUpdate(update);
                    }
                    if (!listLinkInfo.isEmpty()) {
                        OffsetDateTime curTime = OffsetDateTime.now();

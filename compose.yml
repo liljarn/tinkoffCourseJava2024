@@ -59,11 +59,51 @@ services:
     networks:
       - backend
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - grafana:/etc/grafana/provisioning/datasources
+  scrapper:
+    build:
+      context: C:\Users\liljarn\Desktop\java-course-2024-backend\scrapper.Dockerfile
+    container_name: scrapper
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresql
+      - kafka
+      - zookeeper
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/scrapper
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    networks:
+      - backend
 
 volumes:
   postgresql: { }
   zookeeper: { }
   kafka: { }
+  prometheus: { }
+  grafana: { }
 
 networks:
   backend: { }

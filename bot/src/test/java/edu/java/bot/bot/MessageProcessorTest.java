@@ -7,6 +7,9 @@ import edu.java.bot.commands.CommandStart;
 import edu.java.bot.processor.MessageProcessor;
 import edu.java.bot.processor.Processor;
 import edu.java.bot.service.command.CommandService;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +22,8 @@ import static edu.java.bot.utils.MessageConstants.START_MESSAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessageProcessorTest {
+    private static final MeterRegistry METER_REGISTRY = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+
     @Test
     @DisplayName("Not a command test")
     public void process_shouldReturnWrongMessage_whenCommandWasNotSent() {
@@ -27,7 +32,7 @@ public class MessageProcessorTest {
         Mockito.doNothing().when(service).registerChat(1L);
         Update mockUpdate = TestUtils.createMockUpdate("smth", 1L);
         List<Command> commandsList = List.of(new CommandStart(service));
-        Processor processor = new MessageProcessor(commandsList);
+        Processor processor = new MessageProcessor(commandsList, METER_REGISTRY);
         //Act
         SendMessage message = processor.process(mockUpdate);
         //Assert
@@ -43,7 +48,7 @@ public class MessageProcessorTest {
         Mockito.doNothing().when(service).registerChat(1L);
         Update mockUpdate = TestUtils.createMockUpdate(text, 1L);
         List<Command> commandsList = List.of(new CommandStart(service));
-        Processor processor = new MessageProcessor(commandsList);
+        Processor processor = new MessageProcessor(commandsList, METER_REGISTRY);
         //Act
         SendMessage message = processor.process(mockUpdate);
         //Assert
@@ -58,7 +63,7 @@ public class MessageProcessorTest {
         Mockito.doNothing().when(service).registerChat(1L);
         Update mockUpdate = TestUtils.createMockUpdate("/start", 1L);
         List<Command> commandsList = List.of(new CommandStart(service));
-        Processor processor = new MessageProcessor(commandsList);
+        Processor processor = new MessageProcessor(commandsList, METER_REGISTRY);
         //Act
         SendMessage message = processor.process(mockUpdate);
         //Assert

@@ -8,13 +8,16 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
 @UtilityClass
+@Log4j2
 public class RetryFactory {
     private static final Map<String, Function<RetryConfiguration.RetryInfo, Retry>> RETRY_MAP = new HashMap<>();
 
@@ -69,7 +72,7 @@ public class RetryFactory {
             if (throwable instanceof WebClientResponseException e) {
                 return codes.contains(e.getStatusCode().value());
             }
-            return true;
+            return throwable instanceof WebClientRequestException;
         };
     }
 }

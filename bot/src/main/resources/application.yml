@@ -31,7 +31,7 @@ spring:
       spec: maximumSize=1000000,expireAfterAccess=3600s
   kafka:
     consumer:
-      bootstrap-servers: localhost:29092
+      bootstrap-servers: ${KAFKA_URL:}
       group-id: bot
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -40,12 +40,12 @@ spring:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: edu.java.bot.dto.request.LinkUpdate
     producer:
-      bootstrap-servers: localhost:29092
+      bootstrap-servers: ${KAFKA_URL:}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${KAFKA_URL:}
 
 server:
   port: 8090
@@ -59,13 +59,13 @@ springdoc:
 
 client:
   bot:
-    base-url: http://localhost:8080
+    base-url: ${SCRAPPER_URL:}
 
 retry-config:
   retries:
     - client: scrapper
-      type: linear
-      max-attempts: 1
+      type: exponential
+      max-attempts: 5
       step: 2
       delay: 2s
       codes:
@@ -88,9 +88,9 @@ bucket4j:
         }
       rate-limits:
         - bandwidths:
-            - capacity: 1
+            - capacity: 10000
               time: 1
-              unit: hours
+              unit: minutes
               refill-speed: interval
           cache-key: getRemoteAddr()
           skip-condition: '@limitService.isSkipped(getRemoteAddr())'

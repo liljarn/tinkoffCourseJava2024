@@ -10,6 +10,8 @@ services:
       ZOOKEEPER_SERVER_ID: 1
     volumes:
       - zookeeper:/var/lib/zookeeper/data
+    networks:
+      - backend
 
   kafka:
     image: confluentinc/cp-kafka:7.3.2
@@ -21,14 +23,16 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
     volumes:
       - kafka:/var/lib/kafka/data
+    networks:
+      - backend
 
   postgresql:
     image: postgres:16
@@ -70,6 +74,8 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
+    networks:
+      - backend
   grafana:
     image: grafana/grafana-oss
     container_name: grafana
@@ -81,20 +87,44 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - grafana:/etc/grafana/provisioning/datasources
+    networks:
+      - backend
   scrapper:
     build:
-      context: C:\Users\liljarn\Desktop\java-course-2024-backend\scrapper.Dockerfile
+      context: /scrapper
+      dockerfile: scrapper.Dockerfile
     container_name: scrapper
     ports:
       - "8080:8080"
     depends_on:
       - postgresql
-      - kafka
       - zookeeper
+      - kafka
+    env_file:
+      - scrapper/src/main/resources/.env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/scrapper
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - KAFKA_URL=kafka:19092
+      - BOT_URL=http://host.docker.internal:8090
+    networks:
+      - backend
+  bot:
+    build:
+      context: /bot
+      dockerfile: bot.Dockerfile
+    container_name: bot
+    environment:
+      - KAFKA_URL=kafka:19092
+      - SPRING_PROFILES_ACTIVE=dev
+      - SCRAPPER_URL=http://host.docker.internal:8080
+    ports:
+      - "8090:8090"
+    depends_on:
+      - zookeeper
+      - kafka
+      - scrapper
     networks:
       - backend
 
